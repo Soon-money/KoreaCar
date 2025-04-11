@@ -1,0 +1,88 @@
+.hero {
+  position: relative;
+  width: 100%;
+  max-width: 1200px; /* Limit the maximum width */
+  height: 500px; /* Default height for PC */
+  margin: 0 auto; /* Center the Hero component horizontally */
+  overflow: hidden;
+  border-radius: 10px; /* Optional: Add rounded corners for a cleaner look */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%; /* Full height for the image */
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.5s ease-in-out;
+  position: relative;
+}
+
+.hero-text {
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: white; /* White text for better contrast */
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7); /* Add shadow for readability */
+  z-index: 2;
+}
+
+.hero-text h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.cta-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #0056b3;
+}
+
+.dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 2;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background-color: #ccc;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dot.active {
+  background-color: #007bff;
+}
+
+/* Adjust height for mobile devices */
+@media (max-width: 768px) {
+  .hero {
+    height: 300px; /* Decrease height for mobile */
+  }
+
+  .hero-text h2 {
+    font-size: 1.5rem; /* Adjust font size for smaller screens */
+  }
+
+  .cta-button {
+    font-size: 0.9rem; /* Adjust button size for smaller screens */
+  }
+}

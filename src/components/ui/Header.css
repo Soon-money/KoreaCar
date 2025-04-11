@@ -1,0 +1,85 @@
+.header {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px; /* Add padding to bring content closer to the center */
+}
+
+.logo {
+    font-size: 1.2rem; /* Reduced font size */
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center; /* Ensure vertical alignment */
+}
+
+.hamburger {
+    font-size: 1.5rem;
+    background-color: #555; /* Add a background color */
+    color: white;
+    border: none;
+    padding: 10px; /* Add padding for better visibility */
+    border-radius: 5px; /* Optional: rounded corners */
+    cursor: pointer;
+    display: none; /* Hidden by default, shown on small screens */
+    margin-left: 10px; /* Add margin to bring it closer to the center */
+}
+
+.hamburger:hover {
+    background-color: #777; /* Change background on hover */
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+    justify-content: center; /* Center the navigation links */
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.nav-links a:hover {
+    text-decoration: underline;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .hamburger {
+        display: block; /* Show hamburger menu on small screens */
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 90px; /* Increased top value to push the menu further down */
+        right: 20px;
+        background-color: rgba(51, 51, 51, 0.9); /* Slightly transparent background */
+        padding: 15px; /* Add padding inside the menu */
+        border-radius: 5px;
+        z-index: 1000;
+    }
+
+    .nav-links.open {
+        display: flex;
+    }
+
+    .nav-links a {
+        margin: 10px 0;
+    }
+}
