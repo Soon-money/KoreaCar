@@ -1,192 +1,92 @@
-import React, { useState } from "react";
-import "./Listings.css"; // Import CSS for styling
-import { FaChevronCircleDown, FaChevronCircleUp } from "react-icons/fa"; // Import toggle icons
-import Carcard from "./Carcard"; // Import the Carcard component
-import { useTranslation } from "../../TranslationContext"; // Import useTranslation
-
-// Import the images
-import BMWImage from "../../Images/BMW neue klasse.webp";
-import MaybachImage from "../../Images/esemayback.avif";
-import LexusImage from "../../Images/Lexs.jpeg";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import "./Listings.css";
 
 function Listings() {
-  const { translate } = useTranslation(); // Access the translate function
+  const [cars, setCars] = useState([]); // All cars
+  const [currentPage, setCurrentPage] = useState(1); // Current page
+  const carsPerPage = 9; // Number of cars per page
 
-  const sedans = [
-    {
-      id: 1,
-      make: "BMW",
-      model: "Neue Klasse",
-      year: 2023,
-      images: [BMWImage, MaybachImage, LexusImage],
-      video: "car-video.mp4",
-      whatsapp: "821021597173",
-      kakao: "Felix12great",
-      phone: "+821021597173",
-    },
-    {
-      id: 2,
-      make: "Mercedes",
-      model: "Maybach",
-      year: 2022,
-      images: [MaybachImage, BMWImage, LexusImage],
-      video: "car-video2.mp4",
-      whatsapp: "821021597174",
-      kakao: "Felix12great",
-      phone: "+821021597174",
-    },
-    {
-      id: 3,
-      make: "Lexus",
-      model: "RX 500h",
-      year: 2021,
-      images: [LexusImage, BMWImage, MaybachImage],
-      video: "car-video3.mp4",
-      whatsapp: "821021597175",
-      kakao: "Felix12great",
-      phone: "+821021597175",
-    },
-  ];
+  const fetchListings = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/cars");
+      if (!response.ok) {
+        throw new Error("Failed to fetch data from the server");
+      }
+      const data = await response.json();
 
-  const suvs = [
-    {
-      id: 1,
-      make: "Kia",
-      model: "Sportage",
-      year: 2020,
-      images: ["image7.jpg", "image8.jpg", "image9.jpg"],
-      video: "car-video4.mp4",
-      whatsapp: "821021597176",
-      kakao: "Felix12great",
-      phone: "+821021597176",
-    },
-    // Add other SUV data...
-  ];
-
-  const buses = [
-    {
-      id: 1,
-      make: "Mercedes",
-      model: "Sprinter",
-      year: 2020,
-      images: ["image10.jpg", "image11.jpg", "image12.jpg"],
-      video: "car-video5.mp4",
-      whatsapp: "821021597177",
-      kakao: "Felix12great",
-      phone: "+821021597177",
-    },
-    // Add other bus data...
-  ];
-
-  const trucks = [
-    {
-      id: 1,
-      make: "Ford",
-      model: "F-150",
-      year: 2020,
-      images: ["image13.jpg", "image14.jpg", "image15.jpg"],
-      video: "car-video6.mp4",
-      whatsapp: "821021597178",
-      kakao: "Felix12great",
-      phone: "+821021597178",
-    },
-    // Add other truck data...
-  ];
-
-  const [visibleCategories, setVisibleCategories] = useState({
-    sedans: true,
-    suvs: true,
-    buses: true,
-    trucks: true,
-  });
-
-  const toggleCategory = (category) => {
-    setVisibleCategories((prev) => ({
-      ...prev,
-      [category]: !prev[category],
-    }));
+      // Sort the data by createdAt in descending order
+      const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setCars(sortedData);
+    } catch (error) {
+      console.error("Error fetching listings:", error);
+    }
   };
 
-  const CarRow = ({ cars, isVisible }) => (
-    <div className={`car-row ${isVisible ? "visible" : "hidden"}`}>
-      <div className="car-row-content">
-        {cars.map((car) => (
-          <Carcard key={car.id} car={car} /> // Use the Carcard component here
-        ))}
-      </div>
-    </div>
-  );
+  useEffect(() => {
+    fetchListings();
+  }, []);
+
+  // Pagination logic
+  const indexOfLastCar = currentPage * carsPerPage;
+  const indexOfFirstCar = indexOfLastCar - carsPerPage;
+  const currentCars = cars.slice(indexOfFirstCar, indexOfLastCar);
+
+  const nextPage = () => {
+    if (indexOfLastCar < cars.length) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const previousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
 
   return (
     <div className="listings">
-      <h1 className="listings-title">{translate("listings")}</h1> {/* Translated title */}
+      <h1 className="listings-title">Car Listings</h1>
 
-      <div className="category">
-        <h2 className="category-title">
-          <span>{translate("sedan")}</span> {/* Translated category name */}
-          <span
-            className="toggle-icon"
-            onClick={() => toggleCategory("sedans")}
-          >
-            {visibleCategories.sedans ? (
-              <FaChevronCircleUp />
-            ) : (
-              <FaChevronCircleDown />
-            )}
-          </span>
-        </h2>
-        <CarRow cars={sedans} isVisible={visibleCategories.sedans} />
+      <div className="cars-grid">
+        {currentCars.map((car) => (
+          <Link to={`/cardetails/${car.id}`} key={car.id} className="car-item">
+            <img
+              src={
+                Array.isArray(car.pictures) && car.pictures.length > 0
+                  ? car.pictures[0]
+                  : "https://via.placeholder.com/150"
+              }
+              alt={`${car.make} ${car.year}`}
+              className="car-image"
+            />
+            <div className="car-info">
+              <span className="car-make">{car.make}</span>
+              <span className="car-year">{car.year}</span>
+            </div>
+          </Link>
+        ))}
       </div>
 
-      <div className="category">
-        <h2 className="category-title">
-          <span>{translate("suv")}</span> {/* Translated category name */}
-          <span
-            className="toggle-icon"
-            onClick={() => toggleCategory("suvs")}
-          >
-            {visibleCategories.suvs ? (
-              <FaChevronCircleUp />
-            ) : (
-              <FaChevronCircleDown />
-            )}
-          </span>
-        </h2>
-        <CarRow cars={suvs} isVisible={visibleCategories.suvs} />
-      </div>
-
-      <div className="category">
-        <h2 className="category-title">
-          <span>{translate("bus")}</span> {/* Translated category name */}
-          <span
-            className="toggle-icon"
-            onClick={() => toggleCategory("buses")}
-          >
-            {visibleCategories.buses ? (
-              <FaChevronCircleUp />
-            ) : (
-              <FaChevronCircleDown />
-            )}
-          </span>
-        </h2>
-        <CarRow cars={buses} isVisible={visibleCategories.buses} />
-      </div>
-
-      <div className="category">
-        <h2 className="category-title">
-          <span>{translate("truck")}</span> {/* Translated category name */}
-          <span
-            className="toggle-icon"
-            onClick={() => toggleCategory("trucks")}
-          >
-            {visibleCategories.trucks ? (
-              <FaChevronCircleUp />
-            ) : (
-              <FaChevronCircleDown />
-            )}
-          </span>
-        </h2>
-        <CarRow cars={trucks} isVisible={visibleCategories.trucks} />
+      {/* Pagination Controls */}
+      <div className="pagination">
+        <button
+          className="pagination-button"
+          onClick={previousPage}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span className="pagination-info">
+          Page {currentPage} of {Math.ceil(cars.length / carsPerPage)}
+        </span>
+        <button
+          className="pagination-button"
+          onClick={nextPage}
+          disabled={indexOfLastCar >= cars.length}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

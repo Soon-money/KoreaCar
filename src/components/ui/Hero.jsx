@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "../../TranslationContext"; // Import useTranslation
 import "./Hero.css"; // Make sure to create this CSS file for styling
-import BMWNeueKlasse from "../../Images/BMW neue klasse.webp";
+import Carvisioni from "../../Images/Carvisioni.jpg";
 import K8 from "../../Images/k8.jpg";
 import Lexs from "../../Images/Lexs.jpeg";
 import esemayback from "../../Images/esemayback.avif";
@@ -10,7 +10,7 @@ function Hero() {
   const { translate } = useTranslation(); // Access the translate function
 
   const slides = [
-    { image: BMWNeueKlasse, text: translate("bmwNeueKlasse") },
+    { image: Carvisioni, text: translate("Carvision: We Got Your Dream Ride   ") },
     { image: K8, text: translate("kiaK8") },
     { image: Lexs, text: translate("lexus") },
     { image: esemayback, text: translate("newModels") },

@@ -6,7 +6,6 @@ import { useTranslation } from "../../TranslationContext"; // Import useTranslat
 import Header from "./Header"; // Import Header
 import Stickybottommenu from "./Stickybottommenu"; // Import Stickybottommenu
 import "./search.css";
-import Carcard from "./Carcard";
 
 function Search({ cars = [], showAvailableCars = false }) {
   const [query, setQuery] = useState("");
@@ -78,9 +77,29 @@ function Search({ cars = [], showAvailableCars = false }) {
             <h2>{translate("availableCars")}</h2> {/* Translated heading */}
             <div className="car-list">
               {cars.length > 0 ? (
-                cars.map((car) => <Carcard key={car.id} car={car} />)
+                cars.map((car) => (
+                  <div
+                    key={car.id}
+                    className="car-item"
+                    onClick={() => navigate(`/cardetails/${car.id}`)}
+                  >
+                    <img
+                      src={
+                        Array.isArray(car.pictures) && car.pictures.length > 0
+                          ? car.pictures[0]
+                          : "https://via.placeholder.com/150"
+                      }
+                      alt={`${car.make} ${car.year}`}
+                      className="car-image"
+                    />
+                    <div className="car-info">
+                      <span className="car-make">{car.make}</span>
+                      <span className="car-year">{car.year}</span>
+                    </div>
+                  </div>
+                ))
               ) : (
-                <p>{translate("noCarsAvailable")}</p> 
+                <p>{translate("noCarsAvailable")}</p>
               )}
             </div>
           </div>

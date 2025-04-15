@@ -33,11 +33,19 @@
   background: #e9ecef;
 }
 
+/* Car Image (Square Format) */
 .menu-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
+  width: 80px; /* Increase size for better visibility */
+  height: 80px; /* Match width for a square shape */
+  object-fit: cover; /* Ensure the image fits within the square */
+  border-radius: 8px; /* Slightly rounded corners for a modern look */
+  border: 1px solid #ddd; /* Add a subtle border */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effect */
+}
+
+.menu-logo:hover {
+  transform: scale(1.05); /* Slight zoom on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow on hover */
 }
 
 .menu-name {

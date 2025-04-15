@@ -37,6 +37,9 @@ function Header() {
           <Link to="/help" onClick={() => setIsMenuOpen(false)}>
             {translate("help")}
           </Link>
+          <Link to="/AddListing" onClick={() => setIsMenuOpen(false)}>
+            {translate("AddListing")}
+          </Link>
         </nav>
       </div>
     </header>

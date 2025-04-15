@@ -2,7 +2,7 @@ import React from 'react';
 import Header from '../components/ui/Header';
 import Hero from '../components/ui/Hero';
 import Search from '../components/ui/search'; // Import the Search component
-import Boutique from '../components/ui/Boutique';
+import AllCar from '../components/ui/AllCar';
 import Category from '../components/ui/Category';
 import Listings from '../components/ui/Listings';
 import Howtobuy from '../components/ui/Howtobuy';
@@ -20,7 +20,7 @@ function HomePage() {
       <Hero />
       <Category />
       <Listings />
-      <Boutique />
+      <AllCar />
       <Howtobuy />
       <Footer />
       <Stickybottommenu />
