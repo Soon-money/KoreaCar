@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaSearch } from "react-icons/fa"; // Import search icon
 import { RiArrowGoBackFill } from "react-icons/ri"; // Import back button icon
@@ -7,34 +7,55 @@ import Header from "./Header"; // Import Header
 import Stickybottommenu from "./Stickybottommenu"; // Import Stickybottommenu
 import "./search.css";
 
-function Search({ cars = [], showAvailableCars = false }) {
+function Search({ showAvailableCars = false }) {
   const [query, setQuery] = useState("");
+  const [filteredCars, setFilteredCars] = useState([]); // State for filtered cars
   const navigate = useNavigate();
   const location = useLocation(); // Get the current location
   const { translate } = useTranslation(); // Access the translate function
 
-  const handleSearch = (e) => {
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const response = await fetch(`https://carvision.onrender.com/api/cars`);
+        const data = await response.json();
+        setFilteredCars(data); // Initially display all cars
+      } catch (error) {
+        console.error("Error fetching cars:", error);
+      }
+    };
+
+    fetchCars();
+  }, []);
+
+  const handleSearch = async (e) => {
     e.preventDefault();
-    if (query.trim()) {
-      navigate(`/search?query=${query}`);
+    try {
+      const response = await fetch(
+        `https://carvision.onrender.com/api/cars?query=${encodeURIComponent(query)}`
+      );
+      const data = await response.json();
+      setFilteredCars(data);
+    } catch (error) {
+      console.error("Error searching cars:", error);
     }
   };
 
   const handleTagClick = (tag) => {
-    navigate(`/search?query=${tag}`);
+    navigate(`/search/make/${tag.toLowerCase()}`); // Redirect to the MakeSearch page
   };
 
   const tags = [
-    "santafe",
-    "avante",
-    "carnival",
-    "sorento",
-    "k3",
-    "grandeur",
-    "lexus",
-    "palisade",
-    "toyota",
-    "tesla",
+    "Hyundai",
+    "Kia",
+    "Mercedes Benz",
+    "Volkswagen",
+    "Audi",
+    "BMW",
+    "Lexus",
+    "Chevrolet",
+    "Toyota",
+    "Tesla",
   ];
 
   return (
@@ -76,8 +97,8 @@ function Search({ cars = [], showAvailableCars = false }) {
           <div className="available-cars">
             <h2>{translate("availableCars")}</h2> {/* Translated heading */}
             <div className="car-list">
-              {cars.length > 0 ? (
-                cars.map((car) => (
+              {filteredCars.length > 0 ? (
+                filteredCars.map((car) => (
                   <div
                     key={car.id}
                     className="car-item"
@@ -95,6 +116,8 @@ function Search({ cars = [], showAvailableCars = false }) {
                     <div className="car-info">
                       <span className="car-make">{car.make}</span>
                       <span className="car-year">{car.year}</span>
+                      <span className="car-model">{car.model}</span>
+                      <span className="car-price">${car.sellingPrice}</span>
                     </div>
                   </div>
                 ))

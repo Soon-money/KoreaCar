@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,6 +11,7 @@ import {
 } from "react-icons/fa";
 import carDetails from "../Data/CarDetails.json";
 import { IoCloseCircleSharp } from "react-icons/io5";
+import { IoReturnUpBack } from "react-icons/io5";
 import "./AddListing.css";
 
 function AddListing() {
@@ -28,6 +30,7 @@ function AddListing() {
   const [selectedVideos, setSelectedVideos] = useState([]);
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false); // Track upload status
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
@@ -83,13 +86,14 @@ function AddListing() {
   };
 
   const uploadImagesToCloudinary = async () => {
+    setIsUploading(true); // Start loading
     const uploadedUrls = [];
-
+  
     for (const image of selectedImages) {
       const formData = new FormData();
       formData.append("file", image.file);
       formData.append("upload_preset", "speedcarvision");
-
+  
       try {
         const res = await fetch(
           `https://api.cloudinary.com/v1_1/dm6kk5w8j/image/upload`,
@@ -104,23 +108,24 @@ function AddListing() {
         console.error("Error uploading image:", error);
       }
     }
-
+  
     setFormData((prevData) => ({
       ...prevData,
       pictures: uploadedUrls,
     }));
+    setIsUploading(false); // Stop loading
   };
-
   const uploadVideosToCloudinary = async () => {
+    setIsUploading(true); // Start loading
     const uploadedUrls = [];
     setUploadProgress(0);
-
+  
     for (let i = 0; i < selectedVideos.length; i++) {
       const video = selectedVideos[i];
       const formData = new FormData();
       formData.append("file", video.file);
       formData.append("upload_preset", "speedcarvision");
-
+  
       try {
         const res = await fetch(
           `https://api.cloudinary.com/v1_1/dm6kk5w8j/video/upload`,
@@ -129,10 +134,10 @@ function AddListing() {
             body: formData,
           }
         );
-
+  
         const data = await res.json();
         uploadedUrls.push(data.secure_url);
-
+  
         // Update progress
         const progress = Math.round(((i + 1) / selectedVideos.length) * 100);
         setUploadProgress(progress);
@@ -140,12 +145,13 @@ function AddListing() {
         console.error("Error uploading video:", error);
       }
     }
-
+  
     setFormData((prevData) => ({
       ...prevData,
       videos: uploadedUrls,
     }));
     setUploadProgress(0); // Reset progress after upload
+    setIsUploading(false); // Stop loading
   };
 
   const handleNext = async () => {
@@ -179,7 +185,7 @@ function AddListing() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/add-listing", {
+      const res = await fetch("https://carvision.onrender.com/api/add-listing", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -205,7 +211,16 @@ function AddListing() {
 
   return (
     <div className="add-listing-container">
+       <button className="back-button" onClick={() => navigate("/")}>
+              <IoReturnUpBack /> Back
+            </button>
       {message && <div className="message-box">{message}</div>}
+      {isUploading && (
+  <div className="loading-overlay">
+    <div className="spinner"></div>
+    <p>Uploading... Please wait</p>
+  </div>
+)}
       <h1 className="form-title">Add Listing</h1>
       <form onSubmit={handleSubmit} className="add-listing-form">
         {/* Step 1: Add Pictures */}
@@ -246,18 +261,22 @@ function AddListing() {
               ))}
             </div>
             <div className="button-group">
-              <button type="button" className="next-button" onClick={handleNext}>
-                Next
-              </button>
-              {/* Admin Button */}
-              <button
-                type="button"
-                className="admin-button"
-                onClick={() => navigate("/admin")}
-              >
-                Admin
-              </button>
-            </div>
+  <button
+    type="button"
+    className="next-button"
+    onClick={handleNext}
+    disabled={isUploading} // Disable when uploading
+  >
+    {isUploading ? "Uploading..." : "Next"}
+  </button>
+  <button
+    type="button"
+    className="admin-button"
+    onClick={() => navigate("/admin")}
+  >
+    Admin
+  </button>
+</div>
           </div>
         )}
 
@@ -294,18 +313,24 @@ function AddListing() {
                 <p className="upload-progress-text">{uploadProgress}%</p>
               </div>
             )}
-            <div className="button-group">
-              <button
-                type="button"
-                className="previous-button"
-                onClick={handlePrevious}
-              >
-                Previous
-              </button>
-              <button type="button" className="next-button" onClick={handleNext}>
-                Next
-              </button>
-            </div>
+     <div className="button-group">
+  <button
+    type="button"
+    className="previous-button"
+    onClick={handlePrevious}
+    disabled={isUploading} // Disable when uploading
+  >
+    Previous
+  </button>
+  <button
+    type="button"
+    className="next-button"
+    onClick={handleNext}
+    disabled={isUploading} // Disable when uploading
+  >
+    {isUploading ? "Uploading..." : "Next"}
+  </button>
+</div> 
           </div>
         )}
 

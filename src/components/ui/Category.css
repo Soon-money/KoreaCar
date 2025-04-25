@@ -1,3 +1,4 @@
+/* Scope all styles under .category-section to avoid affecting other components */
 .category-section {
   margin: 20px auto;
   padding: 20px;
@@ -11,7 +12,7 @@
   color: #333;
 }
 
-.category-container {
+.category-section .category-container {
   display: flex;
   overflow-x: auto; /* Enable horizontal scrolling on mobile */
   gap: 20px;
@@ -20,20 +21,20 @@
   scrollbar-color: #ccc transparent; /* For Firefox */
 }
 
-.category-container::-webkit-scrollbar {
+.category-section .category-container::-webkit-scrollbar {
   height: 8px; /* Horizontal scrollbar height */
 }
 
-.category-container::-webkit-scrollbar-thumb {
+.category-section .category-container::-webkit-scrollbar-thumb {
   background-color: #ccc;
   border-radius: 4px;
 }
 
-.category-container::-webkit-scrollbar-track {
+.category-section .category-container::-webkit-scrollbar-track {
   background-color: transparent;
 }
 
-.category-item {
+.category-section .category-item {
   flex: 0 0 calc(25% - 20px); /* Show 4 items on mobile by default */
   display: flex;
   flex-direction: column;
@@ -43,34 +44,40 @@
   transition: transform 0.2s ease-in-out;
 }
 
-.category-item:hover {
+.category-section .category-item:hover {
   transform: scale(1.1); /* Slight zoom on hover */
 }
 
-.category-icon {
+.category-section .category-icon {
   font-size: 2rem; /* Icon size */
   color: #007bff; /* Icon color */
 }
 
-.category-name {
+.category-section .category-name {
   font-size: 0.9rem; /* Smaller text for category name */
   margin-top: 5px;
   color: #555;
 }
 
+/* Hide pagination dots */
+.category-section .swiper-pagination,
+.category-section .slick-dots {
+  display: none !important;
+}
+
 @media (max-width: 768px) {
-  .category-item {
+  .category-section .category-item {
     flex: 0 0 calc(33.33% - 10px); /* Show 3 items on smaller screens */
   }
 }
 
 @media (min-width: 768px) {
-  .category-container {
+  .category-section .category-container {
     overflow-x: hidden; /* Disable scrolling on PC */
     gap: 40px; /* Increase spacing between items */
   }
 
-  .category-item {
+  .category-section .category-item {
     flex: 0 0 calc(16.66% - 20px); /* Show all 6 items on PC */
   }
 }

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../TranslationContext"; // Import useTranslation
+import LanguageSwitcher from "./LanguageSwitcher"; // Import LanguageSwitcher
 import "./Header.css"; // Make sure to create this CSS file for styling
+import logo from "../../Images/carvision_logo_positive.png"; // Import the logo image
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,7 +18,7 @@ function Header() {
       <div className="header-container">
         {/* Logo linked to the homepage */}
         <Link to="/" className="logo" onClick={() => setIsMenuOpen(false)}>
-          <h1>KoreaCar</h1> {/* Plain text for the logo */}
+          <img src={logo} alt="KoreaCar Logo" className="header-logo" />
         </Link>
         <button className="hamburger" onClick={toggleMenu}>
           ☰
@@ -41,6 +43,8 @@ function Header() {
             {translate("AddListing")}
           </Link>
         </nav>
+        {/* Add the Language Switcher */}
+        <LanguageSwitcher />
       </div>
     </header>
   );

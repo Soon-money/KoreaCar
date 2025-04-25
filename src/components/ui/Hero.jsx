@@ -1,20 +1,27 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "../../TranslationContext"; // Import useTranslation
+import { LazyLoadImage } from "react-lazy-load-image-component"; // Import LazyLoadImage
+import "react-lazy-load-image-component/src/effects/blur.css"; // Import blur effect for lazy loading
 import "./Hero.css"; // Make sure to create this CSS file for styling
 import Carvisioni from "../../Images/Carvisioni.jpg";
-import K8 from "../../Images/k8.jpg";
-import Lexs from "../../Images/Lexs.jpeg";
-import esemayback from "../../Images/esemayback.avif";
+import Carvisioni1 from "../../Images/Carvisioni1.jpg";
+import carvisioni2 from "../../Images/carvisioni2.jpg";
+import carvisioni3 from "../../Images/carvisioni3.jpg";
 
 function Hero() {
   const { translate } = useTranslation(); // Access the translate function
 
-  const slides = [
-    { image: Carvisioni, text: translate("Carvision: We Got Your Dream Ride   ") },
-    { image: K8, text: translate("kiaK8") },
-    { image: Lexs, text: translate("lexus") },
-    { image: esemayback, text: translate("newModels") },
-  ];
+  // Memoize the slides array
+  const slides = useMemo(
+    () => [
+      { image: Carvisioni, text: translate("Carvision: We Got Your Dream Ride") },
+      { image: Carvisioni1, text: translate("Audi A5 : We Care about Your ride journey") },
+      { image: carvisioni2, text: translate("Hyundai GS: We Love You") },
+      { image: carvisioni3, text: translate("Volkswaggen: We Welcome You") },
+    ],
+    [translate] // Dependency: re-create slides only if translate changes
+  );
 
   const [currentSlide, setCurrentSlide] = useState(0);
   let touchStartX = 0;
@@ -56,10 +63,14 @@ function Hero() {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div
-        className="hero-image"
-        style={{ backgroundImage: `url(${slides[currentSlide].image})` }}
-      ></div>
+      <div className="hero-image">
+        <LazyLoadImage
+          src={slides[currentSlide].image}
+          alt={slides[currentSlide].text}
+          effect="blur" // Blur effect while loading
+          className="lazy-hero-image"
+        />
+      </div>
       <div className="hero-text">
         <h2>{slides[currentSlide].text}</h2>
         <button className="cta-button">{translate("shopNow")}</button>

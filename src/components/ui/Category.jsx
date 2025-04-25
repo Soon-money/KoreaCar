@@ -1,32 +1,43 @@
 import React from "react";
-import "./Category.css"; // Import CSS for styling
-import { IoCarSport } from "react-icons/io5"; // Sedan icon
-import { TbCarSuvFilled } from "react-icons/tb"; // SUV icon
-import { FaBus } from "react-icons/fa"; // Bus icon
-import { FaTruckFront } from "react-icons/fa6"; // Truck icon
-import { BiSolidCarGarage } from "react-icons/bi"; // Convertible icon
-import { useTranslation } from "../../TranslationContext"; // Import useTranslation
+import "./Category.css";
+import { IoCarSport } from "react-icons/io5";
+import { TbCarSuvFilled } from "react-icons/tb";
+import { FaBus } from "react-icons/fa";
+import { FaTruckFront } from "react-icons/fa6";
+import { BiSolidCarGarage } from "react-icons/bi";
+import { useTranslation } from "../../TranslationContext";
+import { useNavigate } from "react-router-dom"; // 👈 Import this
 
 function Category() {
-  const { translate } = useTranslation(); // Access the translate function
+  const { translate } = useTranslation();
+  const navigate = useNavigate(); // 👈 Init router
 
   const categories = [
-    { name: translate("sedan"), icon: <IoCarSport /> },
-    { name: translate("suv"), icon: <TbCarSuvFilled /> },
-    { name: translate("bus"), icon: <FaBus /> },
-    { name: translate("truck"), icon: <FaTruckFront /> },
-    { name: translate("convertible"), icon: <BiSolidCarGarage /> },
-    { name: translate("electric"), icon: "⚡" }, // Keep the emoji for Electric
+    { name: "sedan", icon: <IoCarSport /> },
+    { name: "suv", icon: <TbCarSuvFilled /> },
+    { name: "bus", icon: <FaBus /> },
+    { name: "truck", icon: <FaTruckFront /> },
+    { name: "convertible", icon: <BiSolidCarGarage /> },
+    { name: "electric", icon: "⚡" },
   ];
+
+  const handleClick = (categoryName) => {
+    navigate(`/cars/category/${categoryName}`);
+  };
 
   return (
     <div className="category-section">
-      <h2>{translate("exploreCategories")}</h2> {/* Translated heading */}
+      <h2>{translate("exploreCategories")}</h2>
       <div className="category-container">
         {categories.map((category, index) => (
-          <div key={index} className="category-item">
+          <div
+            key={index}
+            className="category-item"
+            onClick={() => handleClick(category.name)}
+            style={{ cursor: "pointer" }}
+          >
             <span className="category-icon">{category.icon}</span>
-            <span className="category-name">{category.name}</span>
+            <span className="category-name">{translate(category.name)}</span>
           </div>
         ))}
       </div>

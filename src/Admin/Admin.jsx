@@ -1,36 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoReturnUpBack } from "react-icons/io5";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
-import Header from "../components/ui/Header";
-import Footer from "../components/ui/Footer";
-import AddListing from "../AddListing/AddListing"; // Import AddListing component
+import Header from "../components/ui/Header.jsx";
+import Footer from "../components/ui/Footer.jsx";
+import AddListing from "../AddListing/AddListing.jsx";
 import "./Admin.css";
 
 function Admin() {
   const [cars, setCars] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [editingCar, setEditingCar] = useState(null); // State for editing a car
+ 
   const carsPerPage = 20;
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setIsAuthenticated(true);
-      } else {
-        navigate("/login");
-      }
-    });
-
-    return () => unsubscribe();
-  }, [navigate]);
-
   const fetchCars = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/cars");
+      const response = await fetch("https://carvision.onrender.com/api/cars");
       if (!response.ok) {
         throw new Error("Failed to fetch data from the server");
       }
@@ -42,14 +28,12 @@ function Admin() {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchCars();
-    }
-  }, [isAuthenticated]);
+    fetchCars();
+  }, []);
 
   const handleEdit = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/cars/${id}`);
+      const response = await fetch(`https://carvision.onrender.com/api/cars/${id}`);
       if (!response.ok) {
         throw new Error("Failed to fetch car details");
       }
@@ -62,7 +46,7 @@ function Admin() {
 
   const handleSave = async (updatedCar) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/cars/${updatedCar.id}`, {
+      const response = await fetch(`https://carvision.onrender.com/api/cars/${updatedCar.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -81,17 +65,20 @@ function Admin() {
 
   const handleSoldOut = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/cars/${id}/soldout`, {
+      const response = await fetch(`https://carvision.onrender.com/api/cars/${id}/soldout`, {
         method: "PUT",
       });
       if (!response.ok) {
         throw new Error("Failed to mark car as sold out");
       }
-      setCars((prevCars) => prevCars.filter((car) => car.id !== id)); // Remove car from frontend
+      
+      fetchCars(); // Refresh the car list
     } catch (error) {
       console.error("Error marking car as sold out:", error);
     }
   };
+
+ 
 
   const indexOfLastCar = currentPage * carsPerPage;
   const indexOfFirstCar = indexOfLastCar - carsPerPage;
@@ -108,10 +95,6 @@ function Admin() {
       setCurrentPage((prev) => prev - 1);
     }
   };
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   return (
     <div className="admin">
@@ -135,9 +118,12 @@ function Admin() {
         <>
           <div className="cars-grid">
             {currentCars.map((car) => (
-              <div key={car.id} className="car-item">
-                <div className="car-date">
-                  Added on: {new Date(car.createdAt).toLocaleDateString()}
+              <div key={car.id} className={`car-item ${car.soldOut ? "sold-out" : ""}`}>
+
+                {/* Display make and year at the top */}
+                <div className="car-header">
+                  <span className="car-make">{car.make}</span>
+                  <span className="car-year">{car.year}</span>
                 </div>
                 <img
                   src={
@@ -148,17 +134,15 @@ function Admin() {
                   alt={`${car.make} ${car.year}`}
                   className="car-image"
                 />
-                <div className="car-info">
-                  <span className="car-make">{car.make}</span>
-                  <span className="car-year">{car.year}</span>
-                </div>
+                {car.soldOut && <div className="soldout-watermark">SOLD OUT</div>}
                 <div className="car-buttons">
                   <button className="edit-button" onClick={() => handleEdit(car.id)}>
                     Edit
                   </button>
                   <button className="soldout-button" onClick={() => handleSoldOut(car.id)}>
-                    Sold Out
+                    Sold
                   </button>
+                  
                 </div>
               </div>
             ))}

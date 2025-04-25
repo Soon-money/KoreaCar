@@ -1,13 +1,14 @@
 import React from 'react';
-import Header from '../components/ui/Header';
-import Hero from '../components/ui/Hero';
-import Search from '../components/ui/search'; // Import the Search component
-import AllCar from '../components/ui/AllCar';
-import Category from '../components/ui/Category';
-import Listings from '../components/ui/Listings';
-import Howtobuy from '../components/ui/Howtobuy';
-import Footer from '../components/ui/Footer';
-import Stickybottommenu from '../components/ui/Stickybottommenu';
+import Header from '../components/ui/Header.jsx';
+import Hero from '../components/ui/Hero.jsx';
+import Search from '../components/ui/search.jsx';
+import AllCar from '../components/ui/AllCar.jsx';
+import Category from '../components/ui/Category.jsx';
+import Listings from '../components/ui/Listings.jsx';
+import Howtobuy from '../components/ui/Howtobuy.jsx';
+import Footer from '../components/ui/Footer.jsx';
+import Stickybottommenu from '../components/ui/Stickybottommenu.jsx';
+import RecentCar from '../components/ui/RecentCar.jsx';
 
 
 
@@ -19,6 +20,7 @@ function HomePage() {
       <Search /> {/* Add the Search component here */}
       <Hero />
       <Category />
+      <RecentCar />
       <Listings />
       <AllCar />
       <Howtobuy />

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { LazyLoadImage } from "react-lazy-load-image-component"; // Import LazyLoadImage
+import "react-lazy-load-image-component/src/effects/blur.css"; // Import blur effect for lazy loading
 import "./Listings.css";
 
 function Listings() {
@@ -9,7 +11,7 @@ function Listings() {
 
   const fetchListings = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/cars");
+      const response = await fetch("https://carvision.onrender.com/api/cars");
       if (!response.ok) {
         throw new Error("Failed to fetch data from the server");
       }
@@ -51,14 +53,12 @@ function Listings() {
       <div className="cars-grid">
         {currentCars.map((car) => (
           <Link to={`/cardetails/${car.id}`} key={car.id} className="car-item">
-            <img
-              src={
-                Array.isArray(car.pictures) && car.pictures.length > 0
-                  ? car.pictures[0]
-                  : "https://via.placeholder.com/150"
-              }
+            <LazyLoadImage
+              src={car.pictures && car.pictures.length > 0 ? car.pictures[0] : "https://via.placeholder.com/150"}
               alt={`${car.make} ${car.year}`}
               className="car-image"
+              effect="blur" // Blur effect while loading
+              placeholderSrc="https://via.placeholder.com/150" // Placeholder image
             />
             <div className="car-info">
               <span className="car-make">{car.make}</span>

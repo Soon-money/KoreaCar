@@ -206,7 +206,7 @@
   top: 50%;
   transform: translateY(-50%);
   font-size: 2rem;
-  color: white;
+  color: rgb(7, 7, 7);
   border: none;
   background: none;
   cursor: pointer;
@@ -223,4 +223,39 @@
 
 .arrow:hover {
   color: rgba(255, 255, 255, 0.8);
+}
+/* Contact Icons Section */
+.contact-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Space between icons */
+  margin-top: 20px;
+}
+
+.contact-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #007bff; /* Default color */
+  font-size: 14px; /* Text size */
+  transition: transform 0.3s ease, color 0.3s ease; /* Smooth hover effect */
+}
+
+.contact-icon:hover {
+  color: #0056b3; /* Darker blue on hover */
+  transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+.contact-icon svg {
+  font-size: 32px; /* Icon size */
+  margin-bottom: 5px; /* Space between icon and text */
+  transition: transform 0.3s ease, color 0.3s ease; /* Smooth hover effect */
+}
+
+.contact-icon:hover svg {
+  color: #0056b3; /* Change icon color on hover */
+  transform: scale(1.2); /* Slightly enlarge icon on hover */
 }

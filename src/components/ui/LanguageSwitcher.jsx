@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useTranslation } from "../../TranslationContext"; // Import useTranslation
 import { GrLanguage } from "react-icons/gr"; // Language icon
+import { useLocation } from "react-router-dom"; // Import useLocation for route checking
 
 import "./LanguageSwitcher.css"; // Import CSS for styling
 
 function LanguageSwitcher() {
   const { language, setLanguage } = useTranslation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to toggle dropdown
+  const location = useLocation(); // Get the current route
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -17,12 +19,16 @@ function LanguageSwitcher() {
     setIsDropdownOpen(false); // Close dropdown after selection
   };
 
+  // Render the LanguageSwitcher only on the homepage
+  if (location.pathname !== "/") {
+    return null;
+  }
+
   return (
     <div className="language-switcher">
       {/* Language Icon with Dropdown Toggle */}
       <div className="language-toggle" onClick={toggleDropdown}>
         <GrLanguage className="language-icon" />
-        
       </div>
 
       {/* Dropdown Menu */}

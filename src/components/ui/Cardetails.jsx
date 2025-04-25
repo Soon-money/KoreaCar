@@ -5,8 +5,12 @@ import { RiArrowGoBackFill } from "react-icons/ri";
 import { PiCurrencyDollarSimpleFill } from "react-icons/pi";
 import { IoIosSpeedometer } from "react-icons/io";
 import { BsFillFuelPumpFill } from "react-icons/bs";
+import { IoLogoWhatsapp } from "react-icons/io5"; // WhatsApp icon
+import { RiKakaoTalkLine } from "react-icons/ri"; // KakaoTalk icon
+import { LazyLoadImage } from "react-lazy-load-image-component"; // Import LazyLoadImage
+import "react-lazy-load-image-component/src/effects/blur.css"; // Import blur effect for lazy loading
 import Header from "./Header";
-import Stickybottommenu from "./Stickybottommenu";
+import Comment from "./comment"; // Import the Comment component
 import "./Cardetails.css";
 
 function Cardetails() {
@@ -18,11 +22,12 @@ function Cardetails() {
   const [lastClickTime, setLastClickTime] = useState(0); // Track last click time for double-click detection
   const [touchStartX, setTouchStartX] = useState(0); // Track touch start position
   const [touchEndX, setTouchEndX] = useState(0); // Track touch end position
+  const [pinnedComment, setPinnedComment] = useState(null); // State for pinned comment
 
   useEffect(() => {
     const fetchCarData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/cars/${id}`);
+        const response = await fetch(`https://carvision.onrender.com/api/cars/${id}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch car details: ${response.statusText}`);
         }
@@ -36,6 +41,22 @@ function Cardetails() {
 
     fetchCarData();
   }, [id]);
+
+  // Handle the mobile back button behavior
+  useEffect(() => {
+    const handlePopState = (event) => {
+      if (isFullScreen) {
+        setIsFullScreen(false); // Exit full-screen mode
+        event.preventDefault(); // Prevent default back navigation
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isFullScreen]);
 
   if (!car) {
     return <div className="loading">Loading...</div>;
@@ -71,6 +92,7 @@ function Cardetails() {
 
   const handleFullScreenToggle = () => {
     setIsFullScreen(true); // Enter full-screen mode
+    window.history.pushState(null, null, window.location.href); // Add a new history state
   };
 
   const handleTouchStart = (e) => {
@@ -91,6 +113,13 @@ function Cardetails() {
     }
     setTouchStartX(0);
     setTouchEndX(0);
+  };
+
+  // Handle pinning a comment
+  const handlePinComment = (comment) => {
+    setPinnedComment(comment);
+    console.log("Pinned Comment:", comment);
+    // You can save the pinned comment to the database here if needed
   };
 
   return (
@@ -131,9 +160,10 @@ function Cardetails() {
               Your browser does not support the video tag.
             </video>
           ) : (
-            <img
+            <LazyLoadImage
               src={items[currentIndex]}
               alt={`Car Media ${currentIndex}`}
+              effect="blur" // Blur effect while loading
               className={`main-media ${isFullScreen ? "fullscreen-media" : ""}`}
               onClick={handleFullScreenToggle}
             />
@@ -159,9 +189,10 @@ function Cardetails() {
                     <source src={item} type="video/mp4" />
                   </video>
                 ) : (
-                  <img
+                  <LazyLoadImage
                     src={item}
                     alt={`Thumbnail ${index}`}
+                    effect="blur" // Blur effect while loading
                     className="thumbnail-image"
                   />
                 )}
@@ -186,11 +217,36 @@ function Cardetails() {
               <BsFillFuelPumpFill className="detail-icon" />
               <span className="detail-text">Fuel Type: {car.fuelType}</span>
             </div>
+
+            {/* WhatsApp and KakaoTalk Links */}
+            <div className="contact-icons">
+              <a
+                href="https://wa.me/821021597173"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-icon"
+              >
+                <IoLogoWhatsapp />
+                <span>WhatsApp</span>
+              </a>
+              <a
+                href="https://open.kakao.com/o/Felix12great"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-icon"
+              >
+                <RiKakaoTalkLine />
+                <span>KakaoTalk</span>
+              </a>
+            </div>
           </div>
         )}
-      </div>
 
-      <Stickybottommenu />
+        {/* Comment Section */}
+        {!isFullScreen && (
+          <Comment isAdmin={true} onPinComment={handlePinComment} />
+        )}
+      </div>
     </div>
   );
 }

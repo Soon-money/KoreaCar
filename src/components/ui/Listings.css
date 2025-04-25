@@ -1,6 +1,8 @@
+/* filepath: [Listings.css](http://_vscodecontentref_/1) */
+
 /* General Styles */
 .listings {
-  padding: 20px;
+  padding: 0; /* Remove padding */
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -16,19 +18,18 @@
 .cars-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Default grid */
-  gap: 20px;
+  gap: 10px; /* Minimal gap between cards */
 }
 
 .car-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  position: relative; /* Enable positioning for overlay */
   text-decoration: none;
   background: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 250px; /* Fixed height for uniform cards */
 }
 
 .car-item:hover {
@@ -38,24 +39,34 @@
 
 .car-image {
   width: 100%;
-  height: 150px;
-  object-fit: cover;
+  height: 100%; /* Fully occupy the card */
+  object-fit: cover; /* Ensure the image covers the card */
 }
 
 .car-info {
-  padding: 10px;
+  position: absolute; /* Overlay the subtitle on the image */
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #fff(0, 0, 0, 0.6); /* Semi-transparent black background */
+  color: #fff; /* White text for contrast */
+  padding: 5px 10px;
   text-align: center;
 }
 
 .car-make {
-  font-size: 16px;
+  font-size: 14px; /* Smaller font size */
   font-weight: bold;
-  color: #333;
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Hide overflow text */
+  text-overflow: ellipsis; /* Add ellipsis for long text */
 }
 
 .car-year {
-  font-size: 14px;
-  color: #666;
+  font-size: 12px; /* Smaller font size */
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Hide overflow text */
+  text-overflow: ellipsis; /* Add ellipsis for long text */
 }
 
 /* Pagination */
@@ -68,23 +79,24 @@
 }
 
 .pagination-button {
-  padding: 10px 20px;
+  padding: 0; /* Remove padding */
   font-size: 14px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  background-color: transparent; /* Remove background */
+  color: #007bff; /* Set text color */
+  border: none; /* Remove border */
+  text-decoration: underline; /* Add underline */
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 .pagination-button:disabled {
-  background-color: #ccc;
+  color: #ccc; /* Gray color for disabled state */
   cursor: not-allowed;
+  text-decoration: none; /* Remove underline for disabled state */
 }
 
 .pagination-button:hover:not(:disabled) {
-  background-color: #0056b3;
+  color: #0056b3; /* Darker blue on hover */
 }
 
 .pagination-info {
@@ -96,23 +108,14 @@
 @media (max-width: 768px) {
   .cars-grid {
     grid-template-columns: repeat(2, 1fr); /* 2 cars per row */
-    gap: 15px; /* Smaller gap for mobile */
+    gap: 10px; /* Minimal gap for mobile */
   }
 
-  .car-image {
-    height: 120px; /* Adjust image height for smaller screens */
+  .car-item {
+    height: 200px; /* Adjust card height for smaller screens */
   }
 
   .car-info {
-    padding: 8px;
-  }
-
-  .pagination {
-    flex-direction: column; /* Stack pagination controls vertically */
-    gap: 5px;
-  }
-
-  .pagination-button {
-    width: 100%; /* Full-width buttons for mobile */
+    padding: 5px;
   }
 }

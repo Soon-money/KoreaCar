@@ -15,7 +15,7 @@ export const CarListing = pgTable("car_listing", {
   soldOut: boolean("sold_out").default(false), // Use boolean for boolean columns
   createdAt: varchar("created_at", 255), // Timestamp for record creation
   updatedAt: varchar("updated_at", 255), // Timestamp for record updates
-});
+}); // Closing brace for CarListing
 
 export const Image = pgTable("images", {
   id: serial("id").primaryKey(),
