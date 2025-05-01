@@ -17,7 +17,7 @@ function Search({ showAvailableCars = false }) {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const response = await fetch(`https://carvision.onrender.com/api/cars`);
+        const response = await fetch(`http://localhost:5000/api/cars`);
         const data = await response.json();
         setFilteredCars(data); // Initially display all cars
       } catch (error) {
@@ -32,7 +32,7 @@ function Search({ showAvailableCars = false }) {
     e.preventDefault();
     try {
       const response = await fetch(
-        `https://carvision.onrender.com/api/cars?query=${encodeURIComponent(query)}`
+        `http://localhost:5000/api/cars?query=${encodeURIComponent(query)}`
       );
       const data = await response.json();
       setFilteredCars(data);

@@ -1,8 +1,6 @@
-/* filepath: [Listings.css](http://_vscodecontentref_/1) */
-
 /* General Styles */
 .listings {
-  padding: 0; /* Remove padding */
+  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -17,57 +15,68 @@
 /* Cars Grid */
 .cars-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Default grid */
-  gap: 10px; /* Minimal gap between cards */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
+  gap: 15px; /* Space between cards */
 }
 
 .car-item {
-  position: relative; /* Enable positioning for overlay */
-  text-decoration: none;
-  background: #f9f9f9;
-  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   border-radius: 8px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  height: 250px; /* Fixed height for uniform cards */
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.car-item:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.car-image-wrapper {
+  flex: 2.3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
 .car-image {
   width: 100%;
-  height: 100%; /* Fully occupy the card */
-  object-fit: cover; /* Ensure the image covers the card */
+  height: 100%;
+  object-fit: cover;
+}
+
+.car-info-wrapper {
+  flex: 1.7;
+  padding: 10px 15px;
+  background-color: #f9f9f9;
+  display: flex;
+  align-items: center;
 }
 
 .car-info {
-  position: absolute; /* Overlay the subtitle on the image */
-  bottom: 0;
-  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   width: 100%;
-  background: #fff(0, 0, 0, 0.6); /* Semi-transparent black background */
-  color: #fff; /* White text for contrast */
-  padding: 5px 10px;
-  text-align: center;
 }
 
-.car-make {
-  font-size: 14px; /* Smaller font size */
+.car-make-year {
   font-weight: bold;
-  white-space: nowrap; /* Prevent text wrapping */
-  overflow: hidden; /* Hide overflow text */
-  text-overflow: ellipsis; /* Add ellipsis for long text */
+  font-size: 1rem;
+  color: #222;
 }
 
-.car-year {
-  font-size: 12px; /* Smaller font size */
-  white-space: nowrap; /* Prevent text wrapping */
-  overflow: hidden; /* Hide overflow text */
-  text-overflow: ellipsis; /* Add ellipsis for long text */
+.car-price {
+  font-size: 0.95rem;
+  color: #28a745;
+  font-weight: 600;
 }
+
+.car-comment {
+  font-size: 0.85rem;
+  color: #555;
+}
+
 
 /* Pagination */
 .pagination {
@@ -79,24 +88,23 @@
 }
 
 .pagination-button {
-  padding: 0; /* Remove padding */
+  padding: 5px 10px;
   font-size: 14px;
-  background-color: transparent; /* Remove background */
-  color: #007bff; /* Set text color */
-  border: none; /* Remove border */
-  text-decoration: underline; /* Add underline */
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .pagination-button:disabled {
-  color: #ccc; /* Gray color for disabled state */
+  background-color: #ccc;
   cursor: not-allowed;
-  text-decoration: none; /* Remove underline for disabled state */
 }
 
 .pagination-button:hover:not(:disabled) {
-  color: #0056b3; /* Darker blue on hover */
+  background-color: #0056b3;
 }
 
 .pagination-info {
@@ -112,10 +120,33 @@
   }
 
   .car-item {
-    height: 200px; /* Adjust card height for smaller screens */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
+  
 
   .car-info {
-    padding: 5px;
+    padding: 10px 15px;
+    background-color: #f9f9f9;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+
+  .car-make-year,
+  .car-price,
+  .car-comment {
+    font-size: 0.9rem; /* Slightly smaller font for mobile */
   }
 }

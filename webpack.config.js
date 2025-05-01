@@ -1,6 +1,10 @@
+const path = require("path");
+
 module.exports = {
-    // Other Webpack configurations can go here
-    watchOptions: {
-        ignored: ['C:\\DumpStack.log.tmp', '**/node_modules'],
+  resolve: {
+    fallback: {
+      stream: require.resolve("stream-browserify"),
     },
+  },
+  // Other Webpack configurations...
 };

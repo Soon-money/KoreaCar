@@ -9,27 +9,28 @@ import {
   FaCalendarAlt,
   FaIndustry,
 } from "react-icons/fa";
+import { LiaCommentSolid } from "react-icons/lia";
 import carDetails from "../Data/CarDetails.json";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { IoReturnUpBack } from "react-icons/io5";
 import "./AddListing.css";
+import { db } from "../schema"; // Import Drizzle ORM instance
+import { CarListing } from "../schema"; // Import the CarListing table schema
 
 function AddListing() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     pictures: [],
-    videos: [],
     make: "",
     year: "",
     mileage: "",
     sellingPrice: "",
     fuelType: "",
     category: "",
+    comment: "", // Added comment field
   });
   const [selectedImages, setSelectedImages] = useState([]);
-  const [selectedVideos, setSelectedVideos] = useState([]);
   const [draggedIndex, setDraggedIndex] = useState(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false); // Track upload status
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -50,23 +51,9 @@ function AddListing() {
     setSelectedImages((prevImages) => [...prevImages, ...newImages]);
   };
 
-  const handleVideoSelect = (e) => {
-    const files = Array.from(e.target.files);
-    const newVideos = files.map((file) => ({
-      file,
-      name: file.name,
-    }));
-    setSelectedVideos((prevVideos) => [...prevVideos, ...newVideos]);
-  };
-
   const handleImageRemove = (index) => {
     const updatedImages = selectedImages.filter((_, i) => i !== index);
     setSelectedImages(updatedImages);
-  };
-
-  const handleVideoRemove = (index) => {
-    const updatedVideos = selectedVideos.filter((_, i) => i !== index);
-    setSelectedVideos(updatedVideos);
   };
 
   const handleDragStart = (index) => {
@@ -88,15 +75,15 @@ function AddListing() {
   const uploadImagesToCloudinary = async () => {
     setIsUploading(true); // Start loading
     const uploadedUrls = [];
-  
+
     for (const image of selectedImages) {
       const formData = new FormData();
       formData.append("file", image.file);
-      formData.append("upload_preset", "speedcarvision");
-  
+      formData.append("upload_preset", "Carvision"); // Updated folder name
+
       try {
         const res = await fetch(
-          `https://api.cloudinary.com/v1_1/dm6kk5w8j/image/upload`,
+          `https://api.cloudinary.com/v1_1/dcw1d0aik/image/upload`, // Updated Cloudinary URL
           {
             method: "POST",
             body: formData,
@@ -108,49 +95,11 @@ function AddListing() {
         console.error("Error uploading image:", error);
       }
     }
-  
+
     setFormData((prevData) => ({
       ...prevData,
       pictures: uploadedUrls,
     }));
-    setIsUploading(false); // Stop loading
-  };
-  const uploadVideosToCloudinary = async () => {
-    setIsUploading(true); // Start loading
-    const uploadedUrls = [];
-    setUploadProgress(0);
-  
-    for (let i = 0; i < selectedVideos.length; i++) {
-      const video = selectedVideos[i];
-      const formData = new FormData();
-      formData.append("file", video.file);
-      formData.append("upload_preset", "speedcarvision");
-  
-      try {
-        const res = await fetch(
-          `https://api.cloudinary.com/v1_1/dm6kk5w8j/video/upload`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-  
-        const data = await res.json();
-        uploadedUrls.push(data.secure_url);
-  
-        // Update progress
-        const progress = Math.round(((i + 1) / selectedVideos.length) * 100);
-        setUploadProgress(progress);
-      } catch (error) {
-        console.error("Error uploading video:", error);
-      }
-    }
-  
-    setFormData((prevData) => ({
-      ...prevData,
-      videos: uploadedUrls,
-    }));
-    setUploadProgress(0); // Reset progress after upload
     setIsUploading(false); // Stop loading
   };
 
@@ -159,50 +108,51 @@ function AddListing() {
       await uploadImagesToCloudinary();
       // Wait a bit to ensure state is updated (optional, React batching fix)
       await new Promise((res) => setTimeout(res, 300));
-    } else if (currentStep === 2) {
-      await uploadVideosToCloudinary();
-      await new Promise((res) => setTimeout(res, 300));
     }
     setCurrentStep((prevStep) => prevStep + 1);
   };
-  
 
   const handlePrevious = () => {
     setCurrentStep((prevStep) => prevStep - 1);
   };
 
-  const validateForm = () => {
-    return {};
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = validateForm();
 
-    if (Object.keys(newErrors).length > 0) {
-      console.error("Form validation errors:", newErrors);
+    // Validate required fields
+    if (
+      !formData.make ||
+      !formData.year ||
+      !formData.comment || // Ensure comment is validated
+      !formData.sellingPrice ||
+      !formData.fuelType ||
+      !formData.category
+    ) {
+      setMessage("Please fill in all required fields.");
       return;
     }
 
     try {
-      const res = await fetch("https://carvision.onrender.com/api/add-listing", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      // Insert data directly into the database using Drizzle ORM
+      await db.insert(CarListing).values({
+        make: formData.make,
+        year: parseInt(formData.year, 10),
+        mileage: parseInt(formData.mileage, 10),
+        comment: formData.comment, // Include comment in the submission
+        sellingPrice: formData.sellingPrice,
+        fuelType: formData.fuelType,
+        category: formData.category,
+        pictures: formData.pictures || [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        soldOut: false,
       });
-      if (res.ok) {
-        setMessage("Listing submitted successfully!");
-        setTimeout(() => {
-          setMessage("");
-          navigate("/");
-        }, 3000);
-      } else {
-        const errorData = await res.json();
-        console.error("Error submitting listing:", errorData);
-        setMessage("Failed to submit the listing. Please try again.");
-      }
+
+      setMessage("Listing submitted successfully!");
+      setTimeout(() => {
+        setMessage("");
+        navigate("/");
+      }, 3000);
     } catch (error) {
       console.error("Error submitting form:", error);
       setMessage("Failed to submit the listing. Please try again.");
@@ -211,16 +161,16 @@ function AddListing() {
 
   return (
     <div className="add-listing-container">
-       <button className="back-button" onClick={() => navigate("/")}>
-              <IoReturnUpBack /> Back
-            </button>
+      <button className="back-button" onClick={() => navigate("/")}>
+        <IoReturnUpBack /> Back
+      </button>
       {message && <div className="message-box">{message}</div>}
       {isUploading && (
-  <div className="loading-overlay">
-    <div className="spinner"></div>
-    <p>Uploading... Please wait</p>
-  </div>
-)}
+        <div className="loading-overlay">
+          <div className="spinner"></div>
+          <p>Uploading... Please wait</p>
+        </div>
+      )}
       <h1 className="form-title">Add Listing</h1>
       <form onSubmit={handleSubmit} className="add-listing-form">
         {/* Step 1: Add Pictures */}
@@ -261,76 +211,57 @@ function AddListing() {
               ))}
             </div>
             <div className="button-group">
-  <button
-    type="button"
-    className="next-button"
-    onClick={handleNext}
-    disabled={isUploading} // Disable when uploading
-  >
-    {isUploading ? "Uploading..." : "Next"}
-  </button>
-  <button
-    type="button"
-    className="admin-button"
-    onClick={() => navigate("/admin")}
-  >
-    Admin
-  </button>
-</div>
+              <button
+                type="button"
+                className="next-button"
+                onClick={handleNext}
+                disabled={isUploading} // Disable when uploading
+              >
+                {isUploading ? "Uploading..." : "Next"}
+              </button>
+              <button
+                type="button"
+                className="admin-button"
+                onClick={() => navigate("/admin")}
+              >
+                Admin
+              </button>
+            </div>
           </div>
         )}
 
-        {/* Step 2: Add Videos */}
+        {/* Step 2: Add Comment */}
         {currentStep === 2 && (
           <div className="form-step">
-            <h2 className="step-title">Step 2: Add Videos</h2>
-            <input
-              type="file"
-              multiple
-              accept="video/*"
-              onChange={handleVideoSelect}
-            />
-            <div className="uploaded-videos-list">
-              {selectedVideos.map((video, index) => (
-                <div key={index} className="uploaded-video-item">
-                  <p>{video.name}</p>
-                  <button
-                    type="button"
-                    className="remove-video-button"
-                    onClick={() => handleVideoRemove(index)}
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
+            <h2 className="step-title">Step 2: Add Comment</h2>
+            <div className="form-field">
+              <label>
+                <LiaCommentSolid /> Comment
+              </label>
+              <textarea
+                placeholder="Enter your comment"
+                value={formData.comment}
+                onChange={(e) => handleInputChange("comment", e.target.value)}
+                rows="5"
+                className="comment-textarea"
+              ></textarea>
             </div>
-            {uploadProgress > 0 && (
-              <div className="upload-progress-container">
-                <div
-                  className="upload-progress-bar"
-                  style={{ width: `${uploadProgress}%` }}
-                ></div>
-                <p className="upload-progress-text">{uploadProgress}%</p>
-              </div>
-            )}
-     <div className="button-group">
-  <button
-    type="button"
-    className="previous-button"
-    onClick={handlePrevious}
-    disabled={isUploading} // Disable when uploading
-  >
-    Previous
-  </button>
-  <button
-    type="button"
-    className="next-button"
-    onClick={handleNext}
-    disabled={isUploading} // Disable when uploading
-  >
-    {isUploading ? "Uploading..." : "Next"}
-  </button>
-</div> 
+            <div className="button-group">
+              <button
+                type="button"
+                className="previous-button"
+                onClick={handlePrevious}
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                className="next-button"
+                onClick={() => setCurrentStep((prevStep) => prevStep + 1)}
+              >
+                Next
+              </button>
+            </div>
           </div>
         )}
 
@@ -348,6 +279,7 @@ function AddListing() {
                     {item.icon === "FaTachometerAlt" && <FaTachometerAlt />}
                     {item.icon === "FaCar" && <FaCar />}
                     {item.icon === "FaMoneyBillAlt" && <FaMoneyBillAlt />}
+                    {item.icon === "LiaCommentSolid" && <LiaCommentSolid />}
                     {item.label}
                   </label>
                   {item.fieldType === "dropdown" ? (

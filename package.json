@@ -25,7 +25,9 @@
     "isomorphic-fetch": "^3.0.0",
     "npm": "^11.3.0",
     "pg": "^8.14.1",
+    "puppeteer": "^24.7.2",
     "react": "^19.0.0",
+    "react-app-rewired": "^2.2.1",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
     "react-dropbox-chooser": "^0.0.5",
@@ -36,6 +38,7 @@
     "react-scripts": "^5.0.1",
     "react-swipeable": "^7.0.2",
     "react-toastify": "^11.0.5",
+    "stream-browserify": "^3.0.0",
     "twilio": "^5.5.2",
     "typescript": "^3.9.10",
     "web-vitals": "^2.1.4"

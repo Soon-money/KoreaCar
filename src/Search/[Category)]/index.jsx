@@ -33,7 +33,7 @@ function CategorySearch() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`https://carvision.onrender.com/api/cars?category=${category}`);
+        const response = await fetch(`http://localhost:5000/api/cars?category=${category}`);
         if (!response.ok) {
           throw new Error("Failed to fetch cars");
         }

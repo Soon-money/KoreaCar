@@ -259,3 +259,28 @@
   color: #0056b3; /* Change icon color on hover */
   transform: scale(1.2); /* Slightly enlarge icon on hover */
 }
+.car-comment {
+  background-color: #f8f8f8;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.detail-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.detail-icon {
+  font-size: 20px;
+  margin-right: 10px;
+  color: #555;
+}
+
+.detail-text {
+  font-size: 16px;
+  color: #333;
+  word-wrap: break-word;
+}

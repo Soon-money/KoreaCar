@@ -1,0 +1,95 @@
+/* Car Card Container */
+.car-card {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .car-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Car Image */
+  .car-image-wrapper {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+  }
+  
+  .car-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* Car Details */
+  .car-info-wrapper {
+    padding: 10px 15px;
+    background-color: #f9f9f9;
+  }
+  
+  .car-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Minimal spacing between details */
+  }
+  
+  .car-make-year {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #6ee07d;
+  }
+  
+  .car-price {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #28a745;
+  }
+  
+  .car-comment {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: #555;
+  }
+  
+  /* Responsive Design for Mobile */
+  @media (max-width: 768px) {
+    .car-card {
+      width: 100%; /* Ensure the card takes full width on smaller screens */
+      margin: 0 auto; /* Center the card */
+    }
+  
+    .car-image-wrapper {
+      height: 150px; /* Reduce image height for smaller screens */
+    }
+  
+    .car-info-wrapper {
+      padding: 8px 10px; /* Reduce padding for smaller screens */
+    }
+  
+    .car-info {
+      gap: 3px; /* Reduce spacing between details */
+    }
+  
+    .car-make-year {
+      font-size: 0.9rem; /* Slightly smaller font size */
+    }
+  
+    .car-price {
+      font-size: 0.85rem; /* Slightly smaller font size */
+    }
+  
+    .car-comment {
+      font-size: 0.8rem; /* Slightly smaller font size */
+    }
+  }
+  .car-card-link {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Inherit text color */
+  }
