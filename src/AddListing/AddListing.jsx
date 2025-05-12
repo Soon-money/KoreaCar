@@ -27,7 +27,7 @@ function AddListing() {
     sellingPrice: "",
     fuelType: "",
     category: "",
-    comment: "", // Added comment field
+    comment: "",
   });
   const [selectedImages, setSelectedImages] = useState([]);
   const [draggedIndex, setDraggedIndex] = useState(null);
@@ -119,29 +119,16 @@ function AddListing() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate required fields
-    if (
-      !formData.make ||
-      !formData.year ||
-      !formData.comment || // Ensure comment is validated
-      !formData.sellingPrice ||
-      !formData.fuelType ||
-      !formData.category
-    ) {
-      setMessage("Please fill in all required fields.");
-      return;
-    }
-
     try {
       // Insert data directly into the database using Drizzle ORM
       await db.insert(CarListing).values({
-        make: formData.make,
-        year: parseInt(formData.year, 10),
-        mileage: parseInt(formData.mileage, 10),
-        comment: formData.comment, // Include comment in the submission
-        sellingPrice: formData.sellingPrice,
-        fuelType: formData.fuelType,
-        category: formData.category,
+        make: formData.make || null,
+        year: formData.year ? parseInt(formData.year, 10) : null,
+        mileage: formData.mileage ? parseInt(formData.mileage, 10) : null,
+        comment: formData.comment || null,
+        sellingPrice: formData.sellingPrice || null,
+        fuelType: formData.fuelType || null,
+        category: formData.category || null,
         pictures: formData.pictures || [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),

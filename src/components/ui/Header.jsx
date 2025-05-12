@@ -27,9 +27,7 @@ function Header() {
           <Link to="/" onClick={() => setIsMenuOpen(false)}>
             {translate("home")}
           </Link>
-          <Link to="/Boutique" onClick={() => setIsMenuOpen(false)}>
-            {translate("boutique")}
-          </Link>
+      
           <Link to="/search" onClick={() => setIsMenuOpen(false)}>
             {translate("search")}
           </Link>

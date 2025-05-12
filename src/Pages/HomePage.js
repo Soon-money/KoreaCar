@@ -9,6 +9,7 @@ import Howtobuy from '../components/ui/Howtobuy.jsx';
 import Footer from '../components/ui/Footer.jsx';
 import Stickybottommenu from '../components/ui/Stickybottommenu.jsx';
 import RecentCar from '../components/ui/RecentCar.jsx';
+import SoldOut from '../components/ui/soldout.jsx';
 
 
 
@@ -22,6 +23,7 @@ function HomePage() {
       <Category />
       <RecentCar />
       <Listings />
+      <SoldOut />
       <AllCar />
       <Howtobuy />
       <Footer />

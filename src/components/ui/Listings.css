@@ -13,73 +13,95 @@
 }
 
 /* Cars Grid */
-.cars-grid {
+.listings .cars-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
-  gap: 15px; /* Space between cards */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+  gap: 20px; /* Space between cards */
 }
 
-.car-item {
+/* Car Card */
+.listings .car-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  border-radius: 8px;
-  overflow: hidden;
-  text-decoration: none;
   background-color: #fff;
-  border: 1px solid #eee;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-.car-image-wrapper {
-  flex: 2.3;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
-.car-image {
+.listings .car-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* SOLD OUT Watermark */
+.soldout-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 0, 0, 0.7);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 8px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Dim the car image for sold-out cars */
+.car-card.sold-out .car-image {
+  opacity: 0.5;
+  filter: grayscale(100%);
+}
+
+/* Car Image Wrapper */
+.listings .car-image-wrapper {
+  width: 100%;
+  height: 200px; /* Adjust height as needed */
+  overflow: hidden;
+  position: relative;
+  background-color: #f0f0f0; /* Optional: Add a background color for empty spaces */
+}
+
+.listings .car-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Ensures the image fills the container */
+  object-position: center; /* Centers the image within the container */
+  display: block;
 }
 
-.car-info-wrapper {
-  flex: 1.7;
-  padding: 10px 15px;
-  background-color: #f9f9f9;
-  display: flex;
-  align-items: center;
+/* Car Details */
+.listings .car-info {
+  padding: 15px;
+  text-align: center;
 }
 
-.car-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  width: 100%;
-}
-
-.car-make-year {
+.listings .car-make-year {
+  font-size: 1.2rem;
   font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.listings .car-price {
   font-size: 1rem;
-  color: #222;
+  color: #007bff;
+  margin-bottom: 5px;
 }
 
-.car-price {
-  font-size: 0.95rem;
-  color: #28a745;
-  font-weight: 600;
-}
-
-.car-comment {
-  font-size: 0.85rem;
+.listings .car-comment {
+  font-size: 0.9rem;
   color: #555;
 }
 
-
 /* Pagination */
-.pagination {
+.listings .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -87,8 +109,8 @@
   gap: 10px;
 }
 
-.pagination-button {
-  padding: 5px 10px;
+.listings .pagination-button {
+  padding: 10px 20px;
   font-size: 14px;
   background-color: #007bff;
   color: #fff;
@@ -98,55 +120,38 @@
   transition: background-color 0.3s ease;
 }
 
-.pagination-button:disabled {
+.listings .pagination-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
 
-.pagination-button:hover:not(:disabled) {
+.listings .pagination-button:hover:not(:disabled) {
   background-color: #0056b3;
 }
 
-.pagination-info {
+.listings .pagination-info {
   font-size: 14px;
   color: #333;
 }
 
 /* Responsive Design for Mobile */
 @media (max-width: 768px) {
-  .cars-grid {
+  .listings .cars-grid {
     grid-template-columns: repeat(2, 1fr); /* 2 cars per row */
-    gap: 10px; /* Minimal gap for mobile */
+    gap: 15px; /* Minimal gap for mobile */
   }
 
-  .car-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  .listings .car-card {
+    height: auto; /* Adjust card height for smaller screens */
   }
-  
 
-  .car-info {
-    padding: 10px 15px;
-    background-color: #f9f9f9;
-    width: 100%;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  .listings .car-info {
+    padding: 10px;
   }
-  
 
-  .car-make-year,
-  .car-price,
-  .car-comment {
+  .listings .car-make-year,
+  .listings .car-price,
+  .listings .car-comment {
     font-size: 0.9rem; /* Slightly smaller font for mobile */
   }
 }

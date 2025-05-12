@@ -102,13 +102,13 @@ function Help() {
             <ul>
               <li>
                 {translate("email")}:{" "}
-                <a href="mailto:kwitondafelix6@gmail.com">
-                  kwitondafelix6@gmail.com
+                <a href="mailto:zerojhin@gmail.com">
+                  zerojhin@gmail.com
                 </a>
               </li>
               <li>
                 {translate("phone")}:{" "}
-                <a href="tel:+821021597173">+82 10 2159 7173</a>
+                <a href="tel:+821075611177">+82 10 7561 1177</a>
               </li>
             </ul>
           </div>

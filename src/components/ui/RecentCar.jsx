@@ -12,7 +12,7 @@ function RecentCar() {
   useEffect(() => {
     const fetchRecentCar = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/cars");
+        const response = await fetch("https://carvision.onrender.com/api/cars");
         const data = await response.json();
         const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setRecentCar(sortedData[0]); // Get the most recent car

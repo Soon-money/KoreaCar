@@ -9,7 +9,7 @@ import Header from "./Header"; // Import Header
 import Stickybottommenu from "./Stickybottommenu"; // Import Stickybottommenu
 import { useTranslation } from "../../TranslationContext"; // Import useTranslation
 import "./Contact.css"; // Ensure this CSS file exists for styling
-import profileImage from "../../Images/20231226_202312.jpg"; // Import the profile image
+import profileImage from "../../Images/Mr Seo.jpg"; // Import the profile image
 
 function Contact() {
   const navigate = useNavigate(); // Initialize navigation
@@ -35,7 +35,7 @@ function Contact() {
           <ul>
             <li>
               <a
-                href="https://wa.me/821021597173"
+                href="https://wa.me/821075611177"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-icon-link"
@@ -44,23 +44,23 @@ function Contact() {
               </a>
               <strong>{translate("whatsapp")}:</strong>{" "}
               <a
-                href="https://wa.me/821021597173"
+                href="https://wa.me/821075611177"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                +82 10 2159 7173
+                +82 10 7561 1177
               </a>
             </li>
             <li>
               <a
-                href="mailto:kwitondafelix6@gmail.com"
+                href="mailto:zerojhin@gmail.com"
                 className="contact-icon-link"
               >
                 <SiGmail className="contact-icon gmail-icon" />
               </a>
               <strong>{translate("email")}:</strong>{" "}
-              <a href="mailto:kwitondafelix6@gmail.com">
-                kwitondafelix6@gmail.com
+              <a href="mailto:zerojhin@gmail.com">
+                zerojhin@gmail.com
               </a>
             </li>
             <li>
@@ -75,11 +75,11 @@ function Contact() {
               <strong>{translate("kakaoTalk")}:</strong> Felix12great
             </li>
             <li>
-              <a href="tel:+821021597173" className="contact-icon-link">
+              <a href="tel:+821075611177" className="contact-icon-link">
                 <BsFillTelephoneFill className="contact-icon telephone-icon" />
               </a>
               <strong>{translate("telephone")}:</strong>{" "}
-              <a href="tel:+821021597173">+82 10 2159 7173</a>
+              <a href="tel:+821075611177">+82 10 7561 1177</a>
             </li>
           </ul>
         </div>

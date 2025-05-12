@@ -17,7 +17,7 @@ function MakeSearch() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:5000/api/cars?make=${make}`);
+        const response = await fetch(`https://carvision.onrender.com/api/cars?make=${make}`);
         if (!response.ok) {
           throw new Error("Failed to fetch cars");
         }

@@ -3,12 +3,12 @@
   "name": "Carvision - Your Dream Car Awaits",
   "icons": [
     {
-      "src": "Favicon.png", 
+      "src": "Favicon.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "Favicon.png", 
+      "src": "Favicon.png",
       "type": "image/png",
       "sizes": "512x512"
     }
