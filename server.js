@@ -359,6 +359,60 @@ app.post("/api/comments/:id/like", async (req, res) => {
     res.status(500).json({ error: "Failed to like comment." });
   }
 });
+app.get("/car/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const parsedId = parseInt(id, 10);
+
+    if (isNaN(parsedId)) {
+      return res.status(400).send("Invalid car ID.");
+    }
+
+    // Fetch car details from your DB
+    const cars = await db
+      .select()
+      .from(CarListing)
+      .where(eq(CarListing.id, parsedId))
+      .limit(1);
+
+    if (cars.length === 0) {
+      return res.status(404).send("Car not found.");
+    }
+
+    const car = cars[0];
+
+    // Render HTML with dynamic OG tags
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="utf-8" />
+          <title>${car.make} ${car.model} (${car.year}) - Carvision</title>
+          <meta property="og:title" content="${car.make} ${car.model} (${car.year}) - Carvision" />
+          <meta property="og:description" content="${car.comment || "Find your dream car at Carvision!"}" />
+          <meta property="og:image" content="${Array.isArray(car.pictures) ? car.pictures[0] : car.pictures}" />
+          <meta property="og:type" content="website" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta name="theme-color" content="#000000" />
+          <meta name="description" content="${car.comment || "Find your dream car at Carvision!"}" />
+          <link rel="icon" href="/Favicon.png" />
+          <script>
+            // Redirect users to the React SPA route after OG tags are read by bots
+            if (!navigator.userAgent.includes('facebookexternalhit') && !navigator.userAgent.includes('Twitterbot') && !navigator.userAgent.includes('Slackbot')) {
+              window.location.replace("/#/car/${car.id}");
+            }
+          </script>
+        </head>
+        <body>
+          <p>Redirecting to car details...</p>
+        </body>
+      </html>
+    `);
+  } catch (error) {
+    console.error("Error rendering car SSR page:", error);
+    res.status(500).send("Server error.");
+  }
+});
 
 // Serve the APK file
 app.get("/downloads/app.apk", (req, res) => {
