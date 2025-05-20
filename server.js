@@ -359,6 +359,11 @@ app.post("/api/comments/:id/like", async (req, res) => {
     res.status(500).json({ error: "Failed to like comment." });
   }
 });
+app.get("/cardetails/:id", async (req, res) => {
+  // Reuse the logic from /car/:id
+  req.url = `/car/${req.params.id}`;
+  app._router.handle(req, res);
+});
 app.get("/car/:id", async (req, res) => {
   try {
     const { id } = req.params;
