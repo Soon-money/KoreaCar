@@ -99,16 +99,18 @@ app.get("/api/available-cars", async (req, res) => {
   }
 });
 
+
 // ✅ API endpoint to fetch a car by ID
-app.get("/api/cars/:id", async (req, res) => {
+app.get("/car/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const parsedId = parseInt(id, 10);
 
     if (isNaN(parsedId)) {
-      return res.status(400).json({ error: "Invalid car ID." });
+      return res.status(400).send("Invalid car ID.");
     }
 
+    // Fetch car details from your DB
     const cars = await db
       .select()
       .from(CarListing)
@@ -116,17 +118,94 @@ app.get("/api/cars/:id", async (req, res) => {
       .limit(1);
 
     if (cars.length === 0) {
-      return res.status(404).json({ error: "Car not found." });
+      return res.status(404).send("Car not found.");
     }
 
-    const carDetails = cars[0];
+    const car = cars[0];
 
-    console.log("Car Details fetched successfully:", carDetails);
-
-    res.status(200).json(carDetails);
+    // Render HTML with dynamic OG tags
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="utf-8" />
+          <title>${car.make} ${car.model} (${car.year}) - Carvision</title>
+          <meta property="og:title" content="${car.make} ${car.model} (${car.year}) - Carvision" />
+          <meta property="og:description" content="${car.comment || "Find your dream car at Carvision!"}" />
+          <meta property="og:image" content="${Array.isArray(car.pictures) ? car.pictures[0] : car.pictures}" />
+          <meta property="og:type" content="website" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta name="theme-color" content="#000000" />
+          <meta name="description" content="${car.comment || "Find your dream car at Carvision!"}" />
+          <link rel="icon" href="/Favicon.png" />
+          <script>
+            // Redirect users to the React SPA route after OG tags are read by bots
+            if (!navigator.userAgent.includes('facebookexternalhit') && !navigator.userAgent.includes('Twitterbot') && !navigator.userAgent.includes('Slackbot')) {
+              window.location.replace("/#/car/${car.id}");
+            }
+          </script>
+        </head>
+        <body>
+          <p>Redirecting to car details...</p>
+        </body>
+      </html>
+    `);
   } catch (error) {
-    console.error("Error fetching car by ID:", error);
-    res.status(500).json({ error: "Failed to fetch car by ID." });
+    console.error("Error rendering car SSR page:", error);
+    res.status(500).send("Server error.");
+  }
+});
+app.get("/cardetails/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const car = await db
+      .select()
+      .from(CarListing)
+      .where(eq(CarListing.id, parseInt(id)))
+      .limit(1);
+
+    if (car.length === 0) {
+      return res.status(404).send("Car not found");
+    }
+
+    const carData = car[0];
+    const imageUrl = carData.pictures[0]; // Adjust if you use a different structure
+
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Check out this ${carData.make} - ${carData.year} listed on Carvision!">
+        
+        <!-- OG Tags -->
+        <meta property="og:title" content="${carData.make} - ${carData.year} | Carvision" />
+        <meta property="og:description" content="Mileage: ${carData.mileage}km, Price: $${carData.sellingPrice}" />
+        <meta property="og:image" content="${imageUrl}" />
+        <meta property="og:url" content="https://carvisioni.com/cardetails/${id}" />
+        <meta property="og:type" content="website" />
+        
+        <!-- Fallback Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="${carData.make} - ${carData.year}" />
+        <meta name="twitter:description" content="Price: $${carData.sellingPrice}" />
+        <meta name="twitter:image" content="${imageUrl}" />
+        
+        <title>${carData.make} - ${carData.year} | Carvision</title>
+      </head>
+      <body>
+        <script>
+          window.location.href = "/cardetails/${id}";
+        </script>
+      </body>
+      </html>
+    `;
+
+    res.send(html);
+  } catch (error) {
+    console.error("Error rendering car detail page:", error);
+    res.status(500).send("Something went wrong");
   }
 });
 
@@ -359,65 +438,9 @@ app.post("/api/comments/:id/like", async (req, res) => {
     res.status(500).json({ error: "Failed to like comment." });
   }
 });
-app.get("/cardetails/:id", async (req, res) => {
-  // Reuse the logic from /car/:id
-  req.url = `/car/${req.params.id}`;
-  app._router.handle(req, res);
-});
-app.get("/car/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const parsedId = parseInt(id, 10);
 
-    if (isNaN(parsedId)) {
-      return res.status(400).send("Invalid car ID.");
-    }
 
-    // Fetch car details from your DB
-    const cars = await db
-      .select()
-      .from(CarListing)
-      .where(eq(CarListing.id, parsedId))
-      .limit(1);
 
-    if (cars.length === 0) {
-      return res.status(404).send("Car not found.");
-    }
-
-    const car = cars[0];
-
-    // Render HTML with dynamic OG tags
-    res.send(`
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="utf-8" />
-          <title>${car.make} ${car.model} (${car.year}) - Carvision</title>
-          <meta property="og:title" content="${car.make} ${car.model} (${car.year}) - Carvision" />
-          <meta property="og:description" content="${car.comment || "Find your dream car at Carvision!"}" />
-          <meta property="og:image" content="${Array.isArray(car.pictures) ? car.pictures[0] : car.pictures}" />
-          <meta property="og:type" content="website" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta name="theme-color" content="#000000" />
-          <meta name="description" content="${car.comment || "Find your dream car at Carvision!"}" />
-          <link rel="icon" href="/Favicon.png" />
-          <script>
-            // Redirect users to the React SPA route after OG tags are read by bots
-            if (!navigator.userAgent.includes('facebookexternalhit') && !navigator.userAgent.includes('Twitterbot') && !navigator.userAgent.includes('Slackbot')) {
-              window.location.replace("/#/car/${car.id}");
-            }
-          </script>
-        </head>
-        <body>
-          <p>Redirecting to car details...</p>
-        </body>
-      </html>
-    `);
-  } catch (error) {
-    console.error("Error rendering car SSR page:", error);
-    res.status(500).send("Server error.");
-  }
-});
 
 // Serve the APK file
 app.get("/downloads/app.apk", (req, res) => {
@@ -433,5 +456,5 @@ app.get("/downloads/app.apk", (req, res) => {
 // Start the server
 const PORT = 5000;
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on https://carvision.onrender.com`);
 });
