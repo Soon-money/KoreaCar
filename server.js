@@ -456,5 +456,5 @@ app.get("/downloads/app.apk", (req, res) => {
 // Start the server
 const PORT = 5000;
 app.listen(PORT, () => {
-  console.log(`Server is running on https://carvision.onrender.com`);
+  console.log(`Server is running on http://localhost:${PORT}`)
 });
