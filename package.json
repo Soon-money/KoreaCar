@@ -28,6 +28,7 @@
     "isomorphic-fetch": "^3.0.0",
     "npm": "^11.3.0",
     "pg": "^8.14.1",
+    "prerender-node": "^3.8.0",
     "puppeteer": "^24.7.2",
     "react": "^19.0.0",
     "react-app-rewired": "^2.2.1",
