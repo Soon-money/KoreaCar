@@ -1,4 +1,3 @@
-// ...existing imports...
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import CarCard from "./CarCard.jsx";
@@ -58,6 +57,33 @@ function Listings() {
     navigate(`/cardetails/${carId}`);
   };
 
+  // Handler to update the car fields (comment, make, year, price)
+  const handleCarUpdate = async (carId, comment, make, year, price) => {
+    try {
+      const response = await fetch(`https://carvision.onrender.com/api/cars/${carId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          comment,
+          make,
+          year,
+          sellingPrice: price,
+        }),
+      });
+      if (!response.ok) throw new Error("Failed to update car");
+      setCars((prevCars) =>
+        prevCars.map((car) =>
+          car.id === carId
+            ? { ...car, comment, make, year, sellingPrice: price }
+            : car
+        )
+      );
+    } catch (error) {
+      alert("Failed to update car.");
+      console.error(error);
+    }
+  };
+
   return (
     <div className="listings">
       <h1 className="listings-title">Car Listings</h1>
@@ -68,7 +94,8 @@ function Listings() {
             key={car.id}
             car={car}
             onCardClick={handleCardClick}
-            latestComment={car.comment} // <-- Use the main car listing comment
+            latestComment={car.comment}
+            onCommentUpdate={handleCarUpdate}
           />
         ))}
       </div>
