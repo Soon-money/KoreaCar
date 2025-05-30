@@ -4,7 +4,7 @@ import { FaRegShareFromSquare } from "react-icons/fa6";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import "./CarCard.css";
 
-function CarCard({ car, onCardClick }) {
+function CarCard({ car, onCardClick, latestComment }) {
   const handleShare = (e) => {
     e.stopPropagation();
     const shareUrl = `https://carvision.onrender.com/car/${car.id}`;
@@ -24,23 +24,21 @@ function CarCard({ car, onCardClick }) {
   };
 
   const handleCardClick = () => {
-    // Redirect to the specific car details page
     window.location.href = `/cardetails/${car.id}`;
   };
+
+  // Truncate comment if too long
+  const truncate = (str, n) => (str && str.length > n ? str.slice(0, n) + "..." : str);
 
   return (
     <div
       className={`car-card ${car.soldOut ? "sold-out" : ""}`}
       onClick={handleCardClick}
+      style={{ flexDirection: "row-reverse" }} // Picture on right, details on left
     >
       {/* Share Icon */}
       <div className="share-icon" onClick={handleShare}>
         <FaRegShareFromSquare />
-      </div>
-
-      {/* Car Make and Year */}
-      <div className="car-make-year">
-        {car.make} {car.year}
       </div>
 
       {/* SOLD OUT Watermark */}
@@ -62,7 +60,13 @@ function CarCard({ car, onCardClick }) {
 
       {/* Car Details */}
       <div className="car-info">
-        <p className="car-price">{car.sellingPrice}</p>
+        <div className="car-make-year-light">{car.make} {car.year}</div>
+        <div className="car-price-light">{car.sellingPrice}</div>
+        <div className="car-comment-label">Comment</div>
+        <div className="car-comment-light">
+          {latestComment ? truncate(latestComment, 60) : <span className="car-no-comment">No comments yet.</span>}
+        </div>
+        
       </div>
     </div>
   );
