@@ -80,7 +80,7 @@ function AddListing() {
     formData.append("file", image.file);
 
     try {
-      const res = await fetch("http://localhost:5000/api/upload", {
+      const res = await fetch("https://carvision.onrender.com/api/upload", {
         method: "POST",
         body: formData,
       });
