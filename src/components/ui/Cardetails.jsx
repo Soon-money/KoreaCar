@@ -76,13 +76,15 @@ function Cardetails() {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = (e) => {
+    if (e) e.stopPropagation();
     setCurrentIndex((prevIndex) =>
       prevIndex === car.pictures.length - 1 ? 0 : prevIndex + 1
     );
   };
 
-  const handlePrevious = () => {
+  const handlePrevious = (e) => {
+    if (e) e.stopPropagation();
     setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? car.pictures.length - 1 : prevIndex - 1
     );
@@ -177,6 +179,7 @@ function Cardetails() {
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
+          style={isFullScreen ? { zIndex: 1001, background: "#000" } : {}}
         >
           {items[currentIndex] && (
             <LazyLoadImage
@@ -188,16 +191,18 @@ function Cardetails() {
             />
           )}
 
-          {/* Navigation Arrows */}
+          {/* Navigation Arrows - always visible in fullscreen, hover in normal */}
           <button
-            className={`arrow arrow-left ${isFullScreen ? "fullscreen-arrow" : ""}`}
+            className={`arrow arrow-left ${isFullScreen ? "fullscreen-arrow always-show" : ""}`}
             onClick={handlePrevious}
+            style={isFullScreen ? { zIndex: 1002 } : {}}
           >
             <IoIosArrowBack />
           </button>
           <button
-            className={`arrow arrow-right ${isFullScreen ? "fullscreen-arrow" : ""}`}
+            className={`arrow arrow-right ${isFullScreen ? "fullscreen-arrow always-show" : ""}`}
             onClick={handleNext}
+            style={isFullScreen ? { zIndex: 1002 } : {}}
           >
             <IoIosArrowForward />
           </button>

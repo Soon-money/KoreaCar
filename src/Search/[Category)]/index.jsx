@@ -38,7 +38,7 @@ function CategorySearch() {
           throw new Error("Failed to fetch cars");
         }
         const data = await response.json();
-        setCars(data.filter((car) => car.category.toLowerCase() === category.toLowerCase())); // Filter cars by category
+       setCars(data.filter((car) => car.category && car.category.toLowerCase() === category.toLowerCase()));
       } catch (error) {
         setError(error.message);
       } finally {

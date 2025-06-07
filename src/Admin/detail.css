@@ -176,3 +176,27 @@
   height: 100%;
   object-fit: cover;
 }
+/* Add Image Button Styles */
+.add-image-btn {
+  background-color: #17a2b8;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background 0.2s, transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.add-image-btn:last-child {
+  margin-right: 0;
+}
+
+.add-image-btn:hover {
+  background-color: #138496;
+  transform: scale(1.05);
+}

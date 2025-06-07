@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import CarCard from "./CarCard.jsx"; // Import the CarCard component
+import CarCard from "./CarCard.jsx";
 import "./Listings.css";
 
 function Listings() {
@@ -9,9 +9,10 @@ function Listings() {
   const carsPerPage = 9;
   const navigate = useNavigate();
 
+  // Fetch car listings
   const fetchListings = async () => {
     try {
-          const response = await fetch("https://carvision.onrender.com/api/available-cars");
+      const response = await fetch("https://carvision.onrender.com/api/available-cars");
       if (!response.ok) {
         throw new Error("Failed to fetch data from the server");
       }
@@ -20,9 +21,9 @@ function Listings() {
       // Sort cars: non-sold-out cars first, then sold-out cars
       const sortedData = data.sort((a, b) => {
         if (a.soldOut === b.soldOut) {
-          return new Date(b.createdAt) - new Date(a.createdAt); // Sort by creation date
+          return new Date(b.createdAt) - new Date(a.createdAt);
         }
-        return a.soldOut - b.soldOut; // Sold-out cars appear last
+        return a.soldOut - b.soldOut;
       });
 
       setCars(sortedData);
@@ -31,6 +32,7 @@ function Listings() {
     }
   };
 
+  // Fetch listings on mount
   useEffect(() => {
     fetchListings();
   }, []);
@@ -51,23 +53,35 @@ function Listings() {
     }
   };
 
-  const handleShare = (car) => {
-    if (navigator.share) {
-      navigator
-        .share({
-          title: `${car.make} (${car.year})`,
-          text: `Check out this car: ${car.make} (${car.year}) for $${car.sellingPrice}.`,
-          url: window.location.href,
-        })
-        .then(() => console.log("Car shared successfully!"))
-        .catch((error) => console.error("Error sharing car:", error));
-    } else {
-      alert("Sharing is not supported on this device.");
-    }
-  };
-
   const handleCardClick = (carId) => {
     navigate(`/cardetails/${carId}`);
+  };
+
+  // Handler to update the car fields (comment, make, year, price)
+  const handleCarUpdate = async (carId, comment, make, year, price) => {
+    try {
+      const response = await fetch(`https://carvision.onrender.com/api/cars/${carId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          comment,
+          make,
+          year,
+          sellingPrice: price,
+        }),
+      });
+      if (!response.ok) throw new Error("Failed to update car");
+      setCars((prevCars) =>
+        prevCars.map((car) =>
+          car.id === carId
+            ? { ...car, comment, make, year, sellingPrice: price }
+            : car
+        )
+      );
+    } catch (error) {
+      alert("Failed to update car.");
+      console.error(error);
+    }
   };
 
   return (
@@ -80,7 +94,8 @@ function Listings() {
             key={car.id}
             car={car}
             onCardClick={handleCardClick}
-            onShare={handleShare}
+            latestComment={car.comment}
+            onCommentUpdate={handleCarUpdate}
           />
         ))}
       </div>

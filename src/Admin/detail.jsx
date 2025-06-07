@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { RiArrowGoBackFill } from "react-icons/ri";
@@ -12,9 +12,9 @@ function Detail() {
   const navigate = useNavigate();
   const [car, setCar] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [draggedIndex, setDraggedIndex] = useState(null); // For drag-and-drop
+  const [draggedIndex, setDraggedIndex] = useState(null);
+  const fileInputRef = useRef(null);
 
-  // Fetch car data
   useEffect(() => {
     const fetchCarData = async () => {
       try {
@@ -34,7 +34,6 @@ function Detail() {
     fetchCarData();
   }, [id]);
 
-  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCar((prevCar) => ({
@@ -43,7 +42,6 @@ function Detail() {
     }));
   };
 
-  // Handle image removal
   const handleImageRemove = (index) => {
     const updatedPictures = car.pictures.filter((_, i) => i !== index);
     setCar((prevCar) => ({
@@ -52,7 +50,6 @@ function Detail() {
     }));
   };
 
-  // Handle drag-and-drop for rearranging images
   const handleDragStart = (index) => {
     setDraggedIndex(index);
   };
@@ -72,7 +69,45 @@ function Detail() {
     setDraggedIndex(null);
   };
 
-  // Save updated car details
+  // Handle adding new images (accepts URLs)
+  const handleAddImage = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    // If you want to upload to a server, do it here and get the URL.
+    // For now, we'll use local object URLs for preview (not persistent after reload).
+    // Replace this logic with your upload logic as needed.
+    const newImageUrls = await Promise.all(
+      files.map(async (file) => {
+        // Example: upload to server and get URL, or use local preview
+        // Here, just using local preview:
+        return URL.createObjectURL(file);
+      })
+    );
+
+    setCar((prevCar) => ({
+      ...prevCar,
+      pictures: [...prevCar.pictures, ...newImageUrls],
+    }));
+  };
+
+  const handleAddImageByUrl = () => {
+    const url = prompt("Paste the image URL:");
+    if (url && url.trim()) {
+      setCar((prevCar) => ({
+        ...prevCar,
+        pictures: [...prevCar.pictures, url.trim()],
+      }));
+    }
+  };
+
   const handleSave = async () => {
     try {
       const response = await fetch(`https://carvision.onrender.com/api/cars/${id}`, {
@@ -95,7 +130,7 @@ function Detail() {
         throw new Error("Failed to save car details");
       }
       alert("Car details updated successfully!");
-      navigate("/admin"); // Redirect to the admin page
+      navigate("/admin");
     } catch (error) {
       console.error("Error saving car details:", error);
     }
@@ -140,6 +175,22 @@ function Detail() {
         {/* Pictures Section */}
         <div className="main-media-container">
           <h3>Pictures</h3>
+          <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+            <button type="button" onClick={handleAddImage}>
+              Add Image (File)
+            </button>
+            <button type="button" onClick={handleAddImageByUrl}>
+              Add Image (URL)
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              accept="image/*"
+              multiple
+              onChange={handleFileChange}
+            />
+          </div>
           <div className="uploaded-images-grid">
             {car.pictures.map((picture, index) => (
               <div

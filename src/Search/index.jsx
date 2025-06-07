@@ -22,7 +22,7 @@ function MakeSearch() {
           throw new Error("Failed to fetch cars");
         }
         const data = await response.json();
-        setCars(data.filter((car) => car.make.toLowerCase() === make.toLowerCase())); // Filter cars by make
+        setCars(data.filter((car) => car.make && car.make.toLowerCase() === make.toLowerCase()));
       } catch (error) {
         setError(error.message);
       } finally {

@@ -72,26 +72,25 @@ function AddListing() {
     setDraggedIndex(null);
   };
 
-  const uploadImagesToCloudinary = async () => {
+  const uploadImagesToSpaces = async () => {
   setIsUploading(true); // Start loading
   const uploadedUrls = [];
 
   for (const image of selectedImages) {
     const formData = new FormData();
     formData.append("file", image.file);
-    formData.append("upload_preset", "koreacar"); // <-- your new unsigned preset
-    // formData.append("folder", "koreacar"); // <-- optional, only if you want to force folder
 
     try {
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/dwhivksss/image/upload`, // <-- your new cloud name
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const res = await fetch("http://localhost:5000/api/upload", {
+        method: "POST",
+        body: formData,
+      });
       const data = await res.json();
-      uploadedUrls.push(data.secure_url);
+      if (data.url) {
+        uploadedUrls.push(data.url);
+      } else {
+        console.error("Upload failed:", data.error);
+      }
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -104,14 +103,14 @@ function AddListing() {
   setIsUploading(false); // Stop loading
 };
 
-  const handleNext = async () => {
-    if (currentStep === 1) {
-      await uploadImagesToCloudinary();
-      // Wait a bit to ensure state is updated (optional, React batching fix)
-      await new Promise((res) => setTimeout(res, 300));
-    }
-    setCurrentStep((prevStep) => prevStep + 1);
-  };
+const handleNext = async () => {
+  if (currentStep === 1) {
+    await uploadImagesToSpaces();
+    // Wait a bit to ensure state is updated (optional, React batching fix)
+    await new Promise((res) => setTimeout(res, 300));
+  }
+  setCurrentStep((prevStep) => prevStep + 1);
+};
 
   const handlePrevious = () => {
     setCurrentStep((prevStep) => prevStep - 1);

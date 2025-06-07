@@ -1,5 +1,5 @@
 {
-  "schema": "C:/Users/Worked/Desktop/KoreaCar/korea-car/src/schema.js",
+  "schema": "./src/schema.js",
   "out": "./drizzle",
   "dialect": "postgresql",
   "dbCredentials": {
