@@ -5,6 +5,20 @@ import { CarListing } from "./src/schema.js";
 import { eq } from "drizzle-orm";
 import path from "path";
 import { fileURLToPath } from "url";
+import prerender from 'prerender-node';
+import { AnonymousComments } from "./src/schema.js";
+import AWS from "aws-sdk";
+import multer from "multer";
+import dotenv from "dotenv";
+dotenv.config();
+
+const upload = multer();
+const spacesEndpoint = new AWS.Endpoint(process.env.DO_SPACES_ENDPOINT);
+const s3 = new AWS.S3({
+  endpoint: spacesEndpoint,
+  accessKeyId: process.env.DO_SPACES_KEY,
+  secretAccessKey: process.env.DO_SPACES_SECRET,
+});
 
 // Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -15,8 +29,13 @@ const app = express();
 // Enable CORS for all origins
 app.use(cors());
 
+// Add Prerender.io middleware (add your real token here)
+prerender.set('prerenderToken', 'Co5rRA3EnfSUizkP6NYw');
+app.use(prerender);
+
 // Middleware to parse JSON requests
 app.use(express.json());
+
 
 // ✅ Root route to confirm server is working
 app.get("/", (req, res) => {
@@ -98,7 +117,7 @@ app.get("/api/available-cars", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch available cars." });
   }
 });
-// ...existing code...
+
 
 // ✅ API endpoint to fetch a car by ID (JSON for React)
 app.get("/api/cars/:id", async (req, res) => {
@@ -127,9 +146,9 @@ app.get("/api/cars/:id", async (req, res) => {
   }
 });
 
-// ...existing code...
 
-// ✅ API endpoint to fetch a car by ID
+
+// ✅ SSR/OG tags + redirect for bots and browsers
 app.get("/car/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -194,6 +213,8 @@ app.get("/car/:id", async (req, res) => {
     res.status(500).send("Server error.");
   }
 });
+
+// ...existing code...
 // ✅ API endpoint to add a new car listing
 app.post("/api/add-listing", async (req, res) => {
   try {
@@ -423,6 +444,48 @@ app.post("/api/comments/:id/like", async (req, res) => {
     res.status(500).json({ error: "Failed to like comment." });
   }
 });
+app.post("/api/upload", upload.single("file"), async (req, res) => {
+  const file = req.file;
+  const params = {
+    Bucket: process.env.DO_SPACES_BUCKET,
+    Key: `${Date.now()}_${file.originalname}`,
+    Body: file.buffer,
+    ACL: "public-read",
+    ContentType: file.mimetype,
+  };
+
+  try {
+    const data = await s3.upload(params).promise();
+    res.json({ url: data.Location });
+  } catch (err) {
+    console.error("Error uploading to Spaces:", err);
+    res.status(500).json({ error: "Failed to upload image." });
+  }
+});
+
+app.get("/api/car-comments/:carId", async (req, res) => {
+  try {
+    const { carId } = req.params;
+    const parsedCarId = parseInt(carId, 10);
+    const limitNum = parseInt(req.query.limit, 10) || 1;
+
+    if (isNaN(parsedCarId)) {
+      return res.status(400).json({ error: "Invalid car ID." });
+    }
+
+    const comments = await db
+      .select()
+      .from(AnonymousComments)
+      .where(eq(AnonymousComments.carId, parsedCarId))
+      .orderBy(AnonymousComments.createdAt, "desc")
+      .limit(limitNum);
+
+    res.status(200).json(comments);
+  } catch (error) {
+    console.error("Error fetching latest comment:", error);
+    res.status(500).json({ error: "Failed to fetch latest comment." });
+  }
+});
 app.get("/car/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -488,6 +551,8 @@ app.get("/downloads/app.apk", (req, res) => {
     }
   });
 });
+
+
 
 // Start the server
 const PORT = 5000;
