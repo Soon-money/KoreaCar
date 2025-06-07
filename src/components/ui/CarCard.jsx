@@ -172,11 +172,7 @@ function CarCard({ car, onCardClick, latestComment, onCommentUpdate }) {
           )}
         </div>
         {/* Comment */}
-<<<<<<< HEAD
-        
-=======
         <div className="car-comment-label">Comment</div>
->>>>>>> 2735f430b5af3b5c196b844b7e18671f42e4c586
         <div className="car-comment-light" onClick={handleCommentClick}>
           {isEditingComment ? (
             <input
