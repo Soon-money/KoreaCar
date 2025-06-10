@@ -98,7 +98,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 1200; /* Must be above the fullscreen arrows */
 }
 
 .fullscreen-media {
@@ -110,23 +110,24 @@
 
 /* Fullscreen Arrows - always inside the image, big, visible */
 .fullscreen-arrow {
+  opacity: 1 !important;
+  display: flex !important;
+  z-index: 1300; /* make sure this is highest */
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   font-size: 2.2rem;
   color: #fff;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   border: none;
   cursor: pointer;
-  z-index: 1100;
   padding: 12px 14px;
   border-radius: 50%;
-  opacity: 1 !important;
-  display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.2s, color 0.2s, transform 0.2s;
 }
+
 
 .fullscreen-arrow.arrow-left {
   left: 24px;
