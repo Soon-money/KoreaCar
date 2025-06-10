@@ -26,11 +26,17 @@ function Cardetails() {
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
 
-  const getAbsoluteImageUrl = (img) => {
-    if (!img) return "https://carvisioni.com/Favicon.png";
-    if (img.startsWith("http")) return img;
-    return `https://carvisioni.com${img}`;
-  };
+const getAbsoluteImageUrl = (img) => {
+  if (!img) return "https://carvisioni.com/Favicon.png";
+  if (img.startsWith("http")) {
+    // If it's a DigitalOcean Spaces URL, convert to CDN
+    if (img.includes(".digitaloceanspaces.com")) {
+      return img.replace(".digitaloceanspaces.com", ".cdn.digitaloceanspaces.com");
+    }
+    return img;
+  }
+  return `https://carvisioni.com${img}`;
+};
 
   useEffect(() => {
     const fetchCarData = async () => {
@@ -181,52 +187,52 @@ function Cardetails() {
           onTouchEnd={handleTouchEnd}
           style={isFullScreen ? { zIndex: 1001, background: "#000" } : {}}
         >
-          {items[currentIndex] && (
-            <LazyLoadImage
-              src={items[currentIndex]}
-              alt={`Car Media ${currentIndex}`}
-              effect="blur"
-              className={`main-media ${isFullScreen ? "fullscreen-media" : ""}`}
-              onClick={handleFullScreenToggle}
-            />
-          )}
+        {items[currentIndex] && (
+  <LazyLoadImage
+    src={getAbsoluteImageUrl(items[currentIndex])}
+    alt={`Car Media ${currentIndex}`}
+    effect="blur"
+    className={`main-media ${isFullScreen ? "fullscreen-media" : ""}`}
+    onClick={handleFullScreenToggle}
+  />
+)}
 
           {/* Navigation Arrows - always visible in fullscreen, hover in normal */}
-          <button
-            className={`arrow arrow-left ${isFullScreen ? "fullscreen-arrow always-show" : ""}`}
-            onClick={handlePrevious}
-            style={isFullScreen ? { zIndex: 1002 } : {}}
-          >
-            <IoIosArrowBack />
-          </button>
-          <button
-            className={`arrow arrow-right ${isFullScreen ? "fullscreen-arrow always-show" : ""}`}
-            onClick={handleNext}
-            style={isFullScreen ? { zIndex: 1002 } : {}}
-          >
-            <IoIosArrowForward />
-          </button>
+         <button
+  className={`arrow arrow-left ${isFullScreen ? "fullscreen-arrow" : ""}`}
+  onClick={handlePrevious}
+>
+  <IoIosArrowBack />
+</button>
+
+<button
+  className={`arrow arrow-right ${isFullScreen ? "fullscreen-arrow" : ""}`}
+  onClick={handleNext}
+>
+  <IoIosArrowForward />
+</button>
+
         </div>
 
         {/* Thumbnails Section */}
-        <div className="thumbnails-container">
-          {items.map((thumbnail, index) => (
-            <div
-              key={index}
-              className={`thumbnail ${
-                index === currentIndex ? "active-thumbnail" : ""
-              }`}
-              onClick={() => handleThumbnailClick(index)}
-            >
-              <LazyLoadImage
-                src={thumbnail}
-                alt={`Thumbnail ${index}`}
-                effect="blur"
-                className="thumbnail-image"
-              />
-            </div>
-          ))}
-        </div>
+<div className="thumbnails-container">
+  {items.map((thumbnail, index) => (
+    <div
+      key={index}
+      className={`thumbnail ${
+        index === currentIndex ? "active-thumbnail" : ""
+      }`}
+      onClick={() => handleThumbnailClick(index)}
+    >
+      <LazyLoadImage
+        src={getAbsoluteImageUrl(thumbnail)}
+        alt={`Thumbnail ${index}`}
+        effect="blur"
+        className="thumbnail-image"
+      />
+    </div>
+  ))}
+</div>
 
         <div className="details-section">
           <h3>Car Details</h3>
