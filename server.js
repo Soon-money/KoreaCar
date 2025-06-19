@@ -507,6 +507,16 @@ app.get("/car/:id", async (req, res) => {
     }
 
     const car = cars[0];
+    // Get the first image or fallback
+    let image = Array.isArray(car.pictures) ? car.pictures[0] : car.pictures;
+    // Always use CDN for DigitalOcean Spaces images
+    if (image && typeof image === "string" && image.includes(".digitaloceanspaces.com")) {
+      image = image.replace(".digitaloceanspaces.com", ".cdn.digitaloceanspaces.com");
+    }
+    // Fallback image if missing
+    if (!image) {
+      image = "https://carvisioni.com/Favicon.png";
+    }
 
     // Render HTML with dynamic OG tags
     res.send(`
@@ -517,7 +527,7 @@ app.get("/car/:id", async (req, res) => {
           <title>${car.make} ${car.model} (${car.year}) - Carvision</title>
           <meta property="og:title" content="${car.make} ${car.model} (${car.year}) - Carvision" />
           <meta property="og:description" content="${car.comment || "Find your dream car at Carvision!"}" />
-          <meta property="og:image" content="${Array.isArray(car.pictures) ? car.pictures[0] : car.pictures}" />
+          <meta property="og:image" content="${image}" />
           <meta property="og:type" content="website" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="theme-color" content="#000000" />
